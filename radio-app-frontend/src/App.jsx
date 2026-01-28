@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavButton } from './components/NavButton';
+import { HomeView } from './views/HomeView';
 
 function App() {
   const [currentView, setCurrentView] = useState("home")
@@ -14,7 +15,7 @@ function App() {
 
       {/* scrollbarer Mittelteil, strikt begrenzt */}
       <main className="flex-1 overflow-y-auto px-4">
-        {currentView === "home" && <div>Home Screen (Platzhalter)</div>}
+        {currentView === "home" && <HomeView/>}
         {currentView === "playlist" && <div>Playlist Screen (Platzhalter)</div>}
         {currentView === "wishes" && <div>Wünsche Screen (Platzhalter)</div>}
       </main>
