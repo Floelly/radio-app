@@ -14,7 +14,7 @@ function App() {
 
       {/* scrollbarer Mittelteil, strikt begrenzt */}
       <main className="flex-1 overflow-y-auto px-4">
-        {currentView === "home" && <div>Playlist Screen (Platzhalter)</div>}
+        {currentView === "home" && <div>Home Screen (Platzhalter)</div>}
         {currentView === "playlist" && <div>Playlist Screen (Platzhalter)</div>}
         {currentView === "wishes" && <div>Wünsche Screen (Platzhalter)</div>}
       </main>
