@@ -59,3 +59,5 @@ export const login = async ({ email, password }) => {
 export const get = async (path, payload, authorization) => {
   return getJson(path, payload, authorization);
 };
+
+export const getCurrentTrack = () => getJson("/current-track")
