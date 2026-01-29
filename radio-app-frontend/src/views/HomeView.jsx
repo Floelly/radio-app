@@ -26,9 +26,11 @@ export function HomeView() {
     }
 
     loadTrack()
+    const interval = setInterval(loadTrack, 10_000)
 
     return () => {
         isCancelled = true
+        clearInterval(interval)
     }
     }, [])
 
