@@ -1,16 +1,64 @@
-# React + Vite
+# Radio App Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dieses Repository enthält das Frontend und Herzstück der Radio-App für das Modul „Mobile Software Engineering“.  
+Es handelt sich um eine **Vite + React** Anwendung, die mit Capacitor für Android und iOS gebündelt werden kann.
 
-Currently, two official plugins are available:
+## Tech-Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Vite (Build-Tool)
+- React
+- JavaScript (je nach Projekt-Setup)
+- Tailwind CSS / daisyUI (UI-Styling)
+- Prettier (Coding Guidelines)
+- Capacitor (Bridge zu Android/iOS)
 
-## React Compiler
+## Voraussetzungen
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js (LTS)
+- npm
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Dependencies installieren
+npm install
+```
+
+## Entwicklung starten
+
+```bash
+# Dev-Server mit Hot-Reload
+npm run dev
+```
+Der Dev-Server ist unter http://localhost:5173 erreichbar.
+
+## Build für Web
+
+```bash
+# Produktionsbuild erzeugen
+npm run build
+```
+
+Das gebaute Frontend liegt anschließend im dist/-Ordner.
+
+## Build für Mobile
+```bash
+# Web-Assets bauen
+npm run build
+
+# Änderungen in die nativen Projekte synchronisieren
+npx cap sync
+
+# Android Studio / Xcode öffnen (falls eingerichtet)
+npx cap open android
+npx cap open ios
+```
+Die generierten Ordner android/ und ios/ werden über Capacitor erzeugt.
+
+## Ordnerstruktur
+```text
+src/
+  components/      // UI-Komponenten
+  views/           // Seiten/Views
+  api/             // API-Calls
+```
