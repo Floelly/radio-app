@@ -1,4 +1,4 @@
-const BACKEND_BASE_URL =
+export const BACKEND_BASE_URL =
   import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:8080";
 
 const buildError = (data) => {
@@ -26,6 +26,10 @@ const postJson = async (path, payload) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+  if (response.status === 304) {
+    return null;
+  }
+
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw buildError(data);

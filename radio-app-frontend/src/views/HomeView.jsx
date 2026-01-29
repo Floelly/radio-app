@@ -1,27 +1,34 @@
-import { useEffect, useState } from "react";
-import { getCurrentTrack } from "../api/auth";
+import { useEffect, useRef, useState } from "react";
+import { BACKEND_BASE_URL, getCurrentTrack } from "../api/auth";
 
 export function HomeView() {
   const [track, setTrack] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const initialLoadRef = useRef(true);
 
   useEffect(() => {
     let isCancelled = false;
 
     async function loadTrack() {
+      const isInitialLoad = initialLoadRef.current;
       try {
-        setLoading(true);
-        setError(null);
+        if (isInitialLoad) {
+          setLoading(true);
+          setError(null);
+        }
         const data = await getCurrentTrack();
-        if (!isCancelled) setTrack(data);
+        if (!isCancelled && data) setTrack(data);
       } catch (err) {
         if (!isCancelled) {
           setError("Aktueller Titel konnte nicht geladen werden.");
           console.error(err);
         }
       } finally {
-        if (!isCancelled) setLoading(false);
+        if (!isCancelled && isInitialLoad) {
+          setLoading(false);
+          initialLoadRef.current = false;
+        }
       }
     }
 
@@ -57,13 +64,16 @@ export function HomeView() {
 
   const yearText = track.year ? ` (${track.year})` : "";
   const commentText = track.comment ? `· Playlist: ${track.comment}` : "";
+  const coverSrc = track.coverUrl
+    ? new URL(track.coverUrl, BACKEND_BASE_URL).toString()
+    : null;
 
   return (
     <div className="flex flex-col items-center pt-6 pb-8">
       <div className="w-full max-w-sm aspect-square rounded-3xl overflow-hidden shadow-2xl bg-base-300 mb-6">
-        {track.coverUrl ? (
+        {coverSrc ? (
           <img
-            src={track.coverUrl}
+            src={coverSrc}
             alt={`${track.title} Cover`}
             className="w-full h-full object-cover"
           />

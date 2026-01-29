@@ -4,8 +4,10 @@ from datetime import datetime, timezone
 from email.utils import format_datetime, parsedate_to_datetime
 from fastapi import FastAPI, HTTPException, Header, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr, Field
 from jwt import encode, decode, InvalidSignatureError
+from pathlib import Path
 
 app = FastAPI(title="Radio API", version="1.0.0")
 
@@ -93,7 +95,7 @@ TRACKS: List[CurrentTrack] = [
         album="Fake Album 1",
         year=2011,
         duration=244,
-        coverUrl="", # TODO base64 image instead of url?
+        coverUrl="/cover/red",
         playlist="90s" # TODO separate endpoint?
     ),
     CurrentTrack(
@@ -103,7 +105,7 @@ TRACKS: List[CurrentTrack] = [
         album="Fake Album 2",
         year=2006,
         duration=185,
-        coverUrl="",
+        coverUrl="/cover/gradient",
         playlist="Summer"
     ),
     CurrentTrack(
@@ -113,7 +115,7 @@ TRACKS: List[CurrentTrack] = [
         album="Fake Album 3",
         year=2024,
         duration=219,
-        coverUrl="",
+        coverUrl="/cover/green",
         playlist="Pop"
     )
 ]
@@ -210,6 +212,13 @@ def current_track(
 @app.get("/current-host", response_model=CurrentHost)
 def current_host():
     return CurrentHost(name="Peter", email="host1@radio.com")
+
+@app.get("/cover/{someid}")
+def cover(someid: str):
+    cover_image_path = Path("covers/" + someid + ".png")
+    if not cover_image_path.exists():
+        raise HTTPException(status_code=404, detail="Cover image not found")
+    return FileResponse(cover_image_path, media_type="image/png")
 
 @app.post("/wish")
 def wish(payload: WishRequest, authorization: str | None = Header(default=None)):
