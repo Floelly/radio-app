@@ -30,7 +30,16 @@ npm install
 # Dev-Server mit Hot-Reload
 npm run dev
 ```
+
 Der Dev-Server ist unter http://localhost:5173 erreichbar.
+
+```bash
+# Prettier Check
+npx prettier . --check
+
+# Prettier Anwenden
+npx prettier . --write
+```
 
 ## Build für Web
 
@@ -42,6 +51,7 @@ npm run build
 Das gebaute Frontend liegt anschließend im dist/-Ordner.
 
 ## Build für Mobile
+
 ```bash
 # Web-Assets bauen
 npm run build
@@ -53,9 +63,11 @@ npx cap sync
 npx cap open android
 npx cap open ios
 ```
+
 Die generierten Ordner android/ und ios/ werden über Capacitor erzeugt.
 
 ## Ordnerstruktur
+
 ```text
 src/
   components/      // UI-Komponenten
