@@ -10,6 +10,7 @@ WORKDIR /app
 RUN pip install --no-cache-dir fastapi uvicorn[standard] "pydantic>=2" "PyJWT>=2" email-validator
 
 COPY app.py /app/app.py
+COPY covers/ /app/covers/
 
 EXPOSE 8080
 
