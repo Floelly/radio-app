@@ -6,8 +6,7 @@ function App() {
   const [currentView, setCurrentView] = useState("home")
 
   return (
-    <>
-      <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
+    <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
       {/* fixer Header */}
       <header className="h-14 flex items-center justify-center bg-base-200 shadow sticky top-0 z-20">
         <h1 className="text-lg font-semibold">Radio App</h1>
@@ -39,7 +38,6 @@ function App() {
         />
       </nav>
     </div>
-    </>
   )
 }
 
