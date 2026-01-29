@@ -1,4 +1,5 @@
-const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:8080";
+const BACKEND_BASE_URL =
+  import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:8080";
 
 const buildError = (data) => {
   let detail = "";
@@ -6,7 +7,9 @@ const buildError = (data) => {
     detail = data.detail;
   } else if (Array.isArray(data?.detail)) {
     detail = data.detail
-      .map((item) => (typeof item?.msg === "string" ? item.msg : JSON.stringify(item)))
+      .map((item) =>
+        typeof item?.msg === "string" ? item.msg : JSON.stringify(item),
+      )
       .join("\n\n");
   } else {
     detail = JSON.stringify(data || "An Error occured!");
@@ -60,4 +63,4 @@ export const get = async (path, payload, authorization) => {
   return getJson(path, payload, authorization);
 };
 
-export const getCurrentTrack = () => getJson("/current-track")
+export const getCurrentTrack = () => getJson("/current-track");

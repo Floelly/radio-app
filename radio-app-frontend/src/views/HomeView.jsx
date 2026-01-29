@@ -1,40 +1,40 @@
-import { useEffect, useState } from "react"
-import { getCurrentTrack } from "../api/auth"
+import { useEffect, useState } from "react";
+import { getCurrentTrack } from "../api/auth";
 
 export function HomeView() {
-  const [track, setTrack] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [track, setTrack] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isCancelled = false
+    let isCancelled = false;
 
     async function loadTrack() {
       try {
-        setLoading(true)
-        setError(null)
-        const data = await getCurrentTrack()
-        if(!isCancelled) setTrack(data)
+        setLoading(true);
+        setError(null);
+        const data = await getCurrentTrack();
+        if (!isCancelled) setTrack(data);
       } catch (err) {
         if (!isCancelled) {
-          setError("Aktueller Titel konnte nicht geladen werden.")
-          console.error(err)
+          setError("Aktueller Titel konnte nicht geladen werden.");
+          console.error(err);
         }
       } finally {
-        if (!isCancelled) setLoading(false)
+        if (!isCancelled) setLoading(false);
       }
     }
 
-    loadTrack()
-    const interval = setInterval(loadTrack, 10_000)
+    loadTrack();
+    const interval = setInterval(loadTrack, 10_000);
 
     return () => {
-        isCancelled = true
-        clearInterval(interval)
-    }
-    }, [])
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
-    if (loading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center pt-6 pb-8">
         <span className="loading loading-spinner loading-md text-primary" />
@@ -42,7 +42,7 @@ export function HomeView() {
           Lade aktuellen Titel...
         </p>
       </div>
-    )
+    );
   }
 
   if (error || !track) {
@@ -52,12 +52,12 @@ export function HomeView() {
           {error ?? "Kein aktueller Titel verfügbar."}
         </p>
       </div>
-    )
+    );
   }
 
-  const yearText = track.year ? ` (${track.year})` : ""
-  const commentText = track.comment ? `· Playlist: ${track.comment}` : ""
-    
+  const yearText = track.year ? ` (${track.year})` : "";
+  const commentText = track.comment ? `· Playlist: ${track.comment}` : "";
+
   return (
     <div className="flex flex-col items-center pt-6 pb-8">
       <div className="w-full max-w-sm aspect-square rounded-3xl overflow-hidden shadow-2xl bg-base-300 mb-6">
@@ -75,9 +75,7 @@ export function HomeView() {
       </div>
 
       <div className="w-full max-w-sm text-center space-y-1 mb-6">
-        <h2 className="text-xl font-semibold truncate">
-          {track.title}
-        </h2>
+        <h2 className="text-xl font-semibold truncate">{track.title}</h2>
         <p className="text-sm text-base-content/80 truncate">
           {track.artist} · {track.album}
           {yearText}
@@ -87,5 +85,5 @@ export function HomeView() {
         </p>
       </div>
     </div>
-  )
+  );
 }

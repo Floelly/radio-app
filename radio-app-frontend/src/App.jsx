@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { NavButton } from './components/NavButton';
-import { HomeView } from './views/HomeView';
-import { LoginView } from './views/LoginView';
+import { useState } from "react";
+import { NavButton } from "./components/NavButton";
+import { HomeView } from "./views/HomeView";
+import { LoginView } from "./views/LoginView";
 
 function App() {
   const [currentView, setCurrentView] = useState("home");
@@ -16,17 +16,19 @@ function App() {
 
       {/* scrollbarer Mittelteil, strikt begrenzt */}
       <main className="flex-1 overflow-y-auto px-4">
-        {currentView === "home" && <HomeView/>}
-        {currentView === "playlist" && (
-          loginToken
-            ? <div>Playlist Screen (Platzhalter)</div>
-            : <LoginView setLoginToken={setLoginToken} />
-        )}
-        {currentView === "wishes" && (
-          loginToken
-            ? <div>Wünsche Screen (Platzhalter)</div>
-            : <LoginView setLoginToken={setLoginToken} />
-        )}
+        {currentView === "home" && <HomeView />}
+        {currentView === "playlist" &&
+          (loginToken ? (
+            <div>Playlist Screen (Platzhalter)</div>
+          ) : (
+            <LoginView setLoginToken={setLoginToken} />
+          ))}
+        {currentView === "wishes" &&
+          (loginToken ? (
+            <div>Wünsche Screen (Platzhalter)</div>
+          ) : (
+            <LoginView setLoginToken={setLoginToken} />
+          ))}
       </main>
 
       {/* fixe Bottom-Navigation */}
@@ -48,7 +50,7 @@ function App() {
         />
       </nav>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

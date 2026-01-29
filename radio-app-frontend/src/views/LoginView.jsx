@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { login, register } from '../api/auth';
+import { useEffect, useState } from "react";
+import { login, register } from "../api/auth";
 
 export function LoginView({ setLoginToken }) {
   const [email, setEmail] = useState("");
@@ -11,7 +11,6 @@ export function LoginView({ setLoginToken }) {
     const timer = setTimeout(() => setErrorMessage(""), 3000);
     return () => clearTimeout(timer);
   }, [errorMessage]);
-
 
   const handleRegisterClick = async () => {
     try {
@@ -67,14 +66,22 @@ export function LoginView({ setLoginToken }) {
         />
 
         <div className="w-full flex gap-2 mt-4">
-          <button type="button" className="btn btn-outline flex-1" onClick={handleRegisterClick}>
+          <button
+            type="button"
+            className="btn btn-outline flex-1"
+            onClick={handleRegisterClick}
+          >
             Registrieren
           </button>
-          <button type="button" className="btn btn-primary flex-1" onClick={handleLoginClick}>
+          <button
+            type="button"
+            className="btn btn-primary flex-1"
+            onClick={handleLoginClick}
+          >
             Einloggen
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
