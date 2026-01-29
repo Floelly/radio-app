@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { NavButton } from './components/NavButton';
 import { HomeView } from './views/HomeView';
+import { LoginView } from './views/LoginView';
 
 function App() {
-  const [currentView, setCurrentView] = useState("home")
+  const [currentView, setCurrentView] = useState("home");
+  const [loginToken, setLoginToken] = useState(null);
 
   return (
     <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
@@ -15,8 +17,16 @@ function App() {
       {/* scrollbarer Mittelteil, strikt begrenzt */}
       <main className="flex-1 overflow-y-auto px-4">
         {currentView === "home" && <HomeView/>}
-        {currentView === "playlist" && <div>Playlist Screen (Platzhalter)</div>}
-        {currentView === "wishes" && <div>Wünsche Screen (Platzhalter)</div>}
+        {currentView === "playlist" && (
+          loginToken
+            ? <div>Playlist Screen (Platzhalter)</div>
+            : <LoginView setLoginToken={setLoginToken} />
+        )}
+        {currentView === "wishes" && (
+          loginToken
+            ? <div>Wünsche Screen (Platzhalter)</div>
+            : <LoginView setLoginToken={setLoginToken} />
+        )}
       </main>
 
       {/* fixe Bottom-Navigation */}
