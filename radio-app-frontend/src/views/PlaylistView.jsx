@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { postPlaylistRating } from "../api/auth";
+import { postFeedbackPlaylist } from "../api/auth";
 
 export function PlaylistView({ loginToken, goToLogin }) {
   const [toast, setToast] = useState(null);
@@ -21,7 +21,7 @@ export function PlaylistView({ loginToken, goToLogin }) {
         playlist: "standard",
         rating: liked ? "positive" : "negative",
       };
-      await postPlaylistRating({ data: payload, token: loginToken });
+      await postFeedbackPlaylist({ data: payload, token: loginToken });
       setToast({
         type: "success",
         text: "Danke für dein Feedback! " + (liked ? "👍" : "👎"),

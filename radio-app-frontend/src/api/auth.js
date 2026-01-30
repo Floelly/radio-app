@@ -37,6 +37,10 @@ const postJson = async (path, payload, authorization = null) => {
   return data;
 };
 
+export const get = async (path, payload, authorization) => {
+  return getJson(path, payload, authorization);
+};
+
 const getJson = async (path, payload = null, authorization = null) => {
   const query = payload ? `?${new URLSearchParams(payload).toString()}` : "";
   const headers = {};
@@ -63,25 +67,25 @@ export const login = async ({ email, password }) => {
   return postJson("/login", { email, password });
 };
 
-export const get = async (path, payload, authorization) => {
-  return getJson(path, payload, authorization);
-};
-
 export const getCurrentTrack = () => getJson("/current-track");
+
+export const getCurrentHost = () => getJson("/current-host");
 
 export const postSongWish = ({ data, token = null }) => {
   return postJson("/wish", data, token && `Bearer ${token}`);
 };
 
-export const postPlaylistRating = ({ data, token = null }) => {
-  return postJson("/rateplaylist", data, token && `Bearer ${token}`);
+export const postFeedbackPlaylist = ({ data, token = null }) => {
+  return postJson("/feedback/playlist", data, token && `Bearer ${token}`);
 };
 
-export const getCurrentHost = () => getJson("/current-host");
+export const postFeedbackHost = ({ data, token = null }) => {
+  return postJson("/feedback/host", data, token && `Bearer ${token}`);
+};
 
-export const getLive = ({ since, token }) => {
+export const getLiveFeedback = ({ since, token }) => {
   const payload =
     typeof since === "number" && Number.isFinite(since) ? { since } : null;
   const authorization = token ? `Bearer ${token}` : null;
-  return getJson("/host/live", payload, authorization);
+  return getJson("/live/feedback", payload, authorization);
 };

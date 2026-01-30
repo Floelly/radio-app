@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getLive } from "../api/auth";
+import { getLiveFeedback } from "../api/auth";
 
 export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
   const [items, setItems] = useState([]);
@@ -22,7 +22,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
     const loadLive = async () => {
       try {
         setError(null);
-        const data = await getLive({
+        const data = await getLiveFeedback({
           since: lastTimestampRef.current,
           token: loginToken,
         });

@@ -48,20 +48,24 @@ class Wish(BaseModel):
     song: str
     text: str
 
-class ReviewRequest(BaseModel):
+class HostReviewRequest(BaseModel):
     rating: Literal["positive", "negative"]
     text: str = Field(min_length=1)
 
-class Review(BaseModel):
+class HostReview(BaseModel):
     id: int
     timestamp: int
     email: EmailStr
     rating: Literal["positive", "negative"]
     text: str = Field(min_length=1)
 
-class RatePlaylistRequest(BaseModel):
+class PlaylistFeedbackRequest(BaseModel):
     playlist: str
     rating: Literal["positive", "negative"]
+
+class PlaylistVotes(BaseModel):
+    positive: int
+    negative: int
 
 class CurrentTrack(BaseModel):
     id: str
@@ -130,22 +134,22 @@ TRACKS: List[CurrentTrack] = [
     )
 ]
 
-REVIEWS: List[Review] = [
-    Review(
+HOST_REVIEWS: List[HostReview] = [
+    HostReview(
         id=1,
         timestamp=1709251200,
         email="listener1@example.com",
         rating="positive",
         text="Guter Moderator.",
     ),
-    Review(
+    HostReview(
         id=2,
         timestamp=1709254800,
         email="listener2@example.com",
         rating="negative",
         text="Zu viel Werbung!",
     ),
-    Review(
+    HostReview(
         id=3,
         timestamp=1709258400,
         email="listener3@example.com",
@@ -153,6 +157,12 @@ REVIEWS: List[Review] = [
         text="Der macht gute Witze.",
     ),
 ]
+
+PLAYLIST_REVIEWS: dict[str, PlaylistVotes] = {
+    "90s": PlaylistVotes(positive=33, negative=12),
+    "Summer": PlaylistVotes(positive=56, negative=28),
+    "Pop": PlaylistVotes(positive=49, negative=22),
+}
 
 WISHES: List[Wish] = [
     Wish(
@@ -191,8 +201,8 @@ def extract_bearer_token(authorization: str | None) -> str:
     return parts[1]
 
 
-def next_review_id() -> int:
-    return len(REVIEWS) + 1
+def next_host_review_id() -> int:
+    return len(HOST_REVIEWS) + 1
 
 
 def next_wish_id() -> int:
@@ -258,9 +268,9 @@ def current_host(
     )
 
 
-@app.get("/cover/{someid}")
-def cover(someid: str):
-    cover_image_path = Path("covers/" + someid + ".png")
+@app.get("/cover/{id}")
+def cover(id: str):
+    cover_image_path = Path("covers/" + id + ".png")
     if not cover_image_path.exists():
         raise HTTPException(status_code=404, detail="Cover image not found")
     return FileResponse(cover_image_path, media_type="image/png")
@@ -283,14 +293,14 @@ def wish(payload: WishRequest, authorization: str | None = Header(default=None))
     return {"success": True}
 
 
-@app.post("/review")
-def review(payload: ReviewRequest, authorization: str | None = Header(default=None)):
+@app.post("/feedback/host")
+def feedback_host(payload: HostReviewRequest, authorization: str | None = Header(default=None)):
     token = extract_bearer_token(authorization)
     decoded = decode_token(token)
 
-    REVIEWS.append(
-        Review(
-            id=next_review_id(),
+    HOST_REVIEWS.append(
+        HostReview(
+            id=next_host_review_id(),
             timestamp=int(datetime.now().timestamp()),
             email=decoded["email"],
             rating=payload.rating,
@@ -300,15 +310,27 @@ def review(payload: ReviewRequest, authorization: str | None = Header(default=No
     return {"success": True}
 
 
-@app.post("/rateplaylist")
-def rate_playlist(payload: RatePlaylistRequest, authorization: str | None = Header(default=None)):
+@app.post("/feedback/playlist")
+def feedback_playlist(payload: PlaylistFeedbackRequest, authorization: str | None = Header(default=None)):
     token = extract_bearer_token(authorization)
     decoded = decode_token(token)
+    playlist = payload.playlist
+    counts = PLAYLIST_REVIEWS.get(playlist, PlaylistVotes(positive=0, negative=0))
+    if payload.rating == "positive":
+        PLAYLIST_REVIEWS[playlist] = PlaylistVotes(
+            positive=counts.positive + 1,
+            negative=counts.negative,
+        )
+    else:
+        PLAYLIST_REVIEWS[playlist] = PlaylistVotes(
+            positive=counts.positive,
+            negative=counts.negative + 1,
+        )
     return {"success": True}
 
 
-@app.get("/host/live", response_model=List[Review])
-def get_live(
+@app.get("/live/feedback", response_model=List[HostReview])
+def live_feedback(
     response: Response,
     since: int | None = None,
     authorization: str | None = Header(default=None),
@@ -318,7 +340,7 @@ def get_live(
     role = decoded["role"]
     if role != Role.Host:
         raise HTTPException(status_code=403, detail="Host role required")
-    live_items: List[Review] = REVIEWS
+    live_items: List[HostReview] = HOST_REVIEWS
     if since is not None:
         live_items = [item for item in live_items if item.timestamp > since]
     if not live_items:
