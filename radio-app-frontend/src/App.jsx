@@ -4,11 +4,23 @@ import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
 import { HostView } from "./views/HostView";
 import { WishASongView } from "./views/WishASongView";
+import { PlaylistView } from "./views/PlaylistView";
 
 function App() {
   const [currentView, setCurrentView] = useState("home");
+  const [returnToView, setReturnToView] = useState(null);
   const [loginToken, setLoginToken] = useState(null);
   const [userRole, setUserRole] = useState(null);
+
+  const goToLogin = (fromView = "home") => {
+    setReturnToView(fromView);
+    setCurrentView("login");
+  };
+
+  const handleLoggedIn = () => {
+    setCurrentView(returnToView || "home");
+    setReturnToView(null);
+  };
 
   return (
     <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
@@ -20,28 +32,28 @@ function App() {
       {/* scrollbarer Mittelteil, strikt begrenzt */}
       <main className="flex-1 overflow-y-auto px-4">
         {currentView === "home" && <HomeView />}
-        {currentView === "playlist" &&
-          (loginToken ? (
-            <div>Playlist Screen (Platzhalter)</div>
-          ) : (
-            <LoginView
-              setLoginToken={setLoginToken}
-              setUserRole={setUserRole}
-            />
-          ))}
+        {currentView === "playlist" && (
+          <div>Playlist Screen (Platzhalter)</div>
+        )}
         {currentView === "wishes" &&
-          (loginToken ? (
-            userRole === "Host" ? (
-              <HostView loginToken={loginToken} />
-            ) : (
-              <WishASongView loginToken={loginToken} />
-            )
+          (userRole === "Host" ? (
+            <HostView
+              loginToken={loginToken}
+              goToLogin={() => goToLogin("wishes")}
+            />
           ) : (
-            <LoginView
-              setLoginToken={setLoginToken}
-              setUserRole={setUserRole}
+            <WishASongView
+              loginToken={loginToken}
+              goToLogin={() => goToLogin("wishes")}
             />
           ))}
+        {currentView === "login" && (
+          <LoginView
+            setLoginToken={setLoginToken}
+            setUserRole={setUserRole}
+            onLoginSuccess={handleLoggedIn}
+          />
+        )}
       </main>
 
       {/* fixe Bottom-Navigation */}

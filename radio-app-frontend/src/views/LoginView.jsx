@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { login, register } from "../api/auth";
 
-export function LoginView({ setLoginToken, setUserRole }) {
+export function LoginView({ setLoginToken, setUserRole, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -44,6 +44,7 @@ export function LoginView({ setLoginToken, setUserRole }) {
       if (data?.token) {
         setLoginToken?.(data.token);
         setUserRole?.(parseJwtPayload(data.token).role);
+        onLoginSuccess();
       }
     } catch (error) {
       setErrorMessage(error?.detail || "An Error occured!");

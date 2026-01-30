@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getLive } from "../api/auth";
 
-export function HostView({ loginToken, pollIntervalMs = 5000 }) {
+export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -9,7 +9,10 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
   const seenKeysRef = useRef(new Set());
 
   useEffect(() => {
-    if (!loginToken) return;
+    if (!loginToken) {
+      goToLogin();
+      return;
+    }
     let isCancelled = false;
     lastTimestampRef.current = 0;
     seenKeysRef.current = new Set();
@@ -62,7 +65,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
       isCancelled = true;
       clearInterval(interval);
     };
-  }, [loginToken, pollIntervalMs]);
+  }, [loginToken, pollIntervalMs, goToLogin]);
 
   if (isLoading && items.length === 0 && !error) {
     return (

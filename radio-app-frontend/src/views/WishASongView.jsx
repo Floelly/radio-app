@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
 import { postSongWish } from "../api/auth";
 
-export function WishASongView({ loginToken }) {
+export function WishASongView({ loginToken, goToLogin }) {
   const [song, setSong] = useState("");
   const [artist, setArtist] = useState("");
   const [comment, setComment] = useState("");
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
+    if (!loginToken) {
+      goToLogin();
+    }
+  }, [loginToken, goToLogin]);
+
+  useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  if (!loginToken) {
+    return null;
+  }
 
   const handleSubmitWish = async () => {
     if (!song.trim() && !artist.trim() && !comment.trim()) {
