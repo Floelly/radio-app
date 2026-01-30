@@ -69,9 +69,8 @@ export const get = async (path, payload, authorization) => {
 
 export const getCurrentTrack = () => getJson("/current-track");
 
-export const postSongWish = ({ data, token }) => {
-  const authorization = token ? `Bearer ${token}` : null;
-  return postJson("/wish", data, authorization);
+export const postSongWish = ({ data, token = null }) => {
+  return postJson("/wish", data, token && `Bearer ${token}`);
 };
 
 export const getLive = ({ since, token }) => {
