@@ -49,7 +49,7 @@ const getJson = async (path, payload = null, authorization = null) => {
     headers,
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
+  if (!response.ok && response.status != 304) {
     throw buildError(data);
   }
   return data;
@@ -71,6 +71,10 @@ export const getCurrentTrack = () => getJson("/current-track");
 
 export const postSongWish = ({ data, token = null }) => {
   return postJson("/wish", data, token && `Bearer ${token}`);
+};
+
+export const postPlaylistRating = ({ data, token = null }) => {
+  return postJson("/rateplaylist", data, token && `Bearer ${token}`);
 };
 
 export const getLive = ({ since, token }) => {

@@ -33,7 +33,10 @@ function App() {
       <main className="flex-1 overflow-y-auto px-4">
         {currentView === "home" && <HomeView />}
         {currentView === "playlist" && (
-          <div>Playlist Screen (Platzhalter)</div>
+          <PlaylistView
+            loginToken={loginToken}
+            goToLogin={() => goToLogin("playlist")}
+          />
         )}
         {currentView === "wishes" &&
           (userRole === "Host" ? (
