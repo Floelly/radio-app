@@ -26,10 +26,6 @@ const postJson = async (path, payload) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (response.status === 304) {
-    return null;
-  }
-
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw buildError(data);
