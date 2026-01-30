@@ -69,6 +69,8 @@ export const login = async ({ email, password }) => {
 
 export const getCurrentTrack = () => getJson("/current-track");
 
+export const getCurrentPlaylist = () => getJson("/current-playlist");
+
 export const getCurrentHost = () => getJson("/current-host");
 
 export const postSongWish = ({ data, token = null }) => {

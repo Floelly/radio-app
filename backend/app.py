@@ -82,6 +82,9 @@ class CurrentHost(BaseModel):
     email: EmailStr
     imageUrl: str
 
+class CurrentPlaylist(BaseModel):
+    playlist: str
+
 class Role(str, Enum):
     User = "User"
     Host = "Host"
@@ -250,6 +253,17 @@ def current_track(
             pass
 
     return TRACKS[now_local.minute % len(TRACKS)]
+
+
+@app.get("/current-playlist", response_model=CurrentPlaylist)
+def current_playlist(
+    response: Response,
+    if_modified_since: str | None = Header(default=None, alias="If-Modified-Since"),
+):
+    track = current_track(response, if_modified_since)
+    if isinstance(track, Response):
+        return track
+    return CurrentPlaylist(playlist=track.playlist)
 
 
 @app.get("/current-host", response_model=CurrentHost)
