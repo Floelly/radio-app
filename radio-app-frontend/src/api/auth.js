@@ -64,3 +64,10 @@ export const get = async (path, payload, authorization) => {
 };
 
 export const getCurrentTrack = () => getJson("/current-track");
+
+export const getLive = ({ since, token }) => {
+  const payload =
+    typeof since === "number" && Number.isFinite(since) ? { since } : null;
+  const authorization = token ? `Bearer ${token}` : null;
+  return getJson("/host/live", payload, authorization);
+};

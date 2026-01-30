@@ -2,10 +2,12 @@ import { useState } from "react";
 import { NavButton } from "./components/NavButton";
 import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
+import { HostView } from "./views/HostView";
 
 function App() {
   const [currentView, setCurrentView] = useState("home");
   const [loginToken, setLoginToken] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
   return (
     <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
@@ -21,13 +23,23 @@ function App() {
           (loginToken ? (
             <div>Playlist Screen (Platzhalter)</div>
           ) : (
-            <LoginView setLoginToken={setLoginToken} />
+            <LoginView
+              setLoginToken={setLoginToken}
+              setUserRole={setUserRole}
+            />
           ))}
         {currentView === "wishes" &&
           (loginToken ? (
-            <div>Wünsche Screen (Platzhalter)</div>
+            userRole === "Host" ? (
+              <HostView loginToken={loginToken} />
+            ) : (
+              <div>Wünsche Screen (Platzhalter)</div>
+            )
           ) : (
-            <LoginView setLoginToken={setLoginToken} />
+            <LoginView
+              setLoginToken={setLoginToken}
+              setUserRole={setUserRole}
+            />
           ))}
       </main>
 

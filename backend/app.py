@@ -38,17 +38,30 @@ class RegisterResponse(BaseModel):
 class WishRequest(BaseModel):
     text: str = Field(min_length=1)
 
+class Wish(BaseModel):
+    id: int
+    timestamp: int
+    email: EmailStr
+    text: str = Field(min_length=1)
+
 class ReviewRequest(BaseModel):
-    host_email: EmailStr
     rating: Literal["positive", "negative"]
     text: str = Field(min_length=1)
 
 class Review(BaseModel):
-    review_id: int
+    id: int
+    timestamp: int
     email: EmailStr
-    host_email: EmailStr
     rating: Literal["positive", "negative"]
     text: str = Field(min_length=1)
+
+class LiveItem(BaseModel):
+    type: Literal["wish", "review"]
+    id: int
+    timestamp: int
+    email: EmailStr
+    text: str = Field(min_length=1)
+    rating: Literal["positive", "negative"] | None = None
 
 class RatePlaylistRequest(BaseModel):
     playlist: str
@@ -122,28 +135,42 @@ TRACKS: List[CurrentTrack] = [
 
 REVIEWS: List[Review] = [
     Review(
-        review_id=1,
+        id=1,
+        timestamp=1709251200,
         email="listener1@example.com",
-        host_email="host1@radio.com",
         rating="positive",
         text="Guter Moderator.",
     ),
     Review(
-        review_id=2,
+        id=2,
+        timestamp=1709254800,
         email="listener2@example.com",
-        host_email="host1@radio.com",
         rating="negative",
         text="Zu viel Werbung!",
     ),
     Review(
-        review_id=3,
+        id=3,
+        timestamp=1709258400,
         email="listener3@example.com",
-        host_email="host2@radio.com",
         rating="positive",
         text="Der macht gute Witze.",
     ),
 ]
 
+WISHES: List[Wish] = [
+    Wish(
+        id=1,
+        timestamp=1709253000,
+        email="listener2@example.com",
+        text="Ich wünsche mir \"Fake Track 3\", das ist mein Lieblingssong."
+    ),
+    Wish(
+        id=2,
+        timestamp=1709256600,
+        email="listener2@example.com",
+        text="Mach mal Track 2 an!"
+    )
+]
 
 def decode_token(token: str) -> dict:
     try:
@@ -165,6 +192,10 @@ def extract_bearer_token(authorization: str | None) -> str:
 
 def next_review_id() -> int:
     return len(REVIEWS) + 1
+
+
+def next_wish_id() -> int:
+    return len(WISHES) + 1
 
 
 @app.post("/login", response_model=AuthenticatedUser)
@@ -209,9 +240,11 @@ def current_track(
 
     return TRACKS[now_local.minute % len(TRACKS)]
 
+
 @app.get("/current-host", response_model=CurrentHost)
 def current_host():
     return CurrentHost(name="Peter", email="host1@radio.com")
+
 
 @app.get("/cover/{someid}")
 def cover(someid: str):
@@ -220,49 +253,74 @@ def cover(someid: str):
         raise HTTPException(status_code=404, detail="Cover image not found")
     return FileResponse(cover_image_path, media_type="image/png")
 
+
 @app.post("/wish")
 def wish(payload: WishRequest, authorization: str | None = Header(default=None)):
     token = extract_bearer_token(authorization)
-    decode_token(token)
+    decoded = decode_token(token)
+    WISHES.append(
+        Wish(
+            id=next_wish_id(),
+            timestamp=int(datetime.now().timestamp()),
+            email=decoded["email"],
+            text=payload.text
+        )
+    )
     return {"success": True}
+
 
 @app.post("/review")
 def review(payload: ReviewRequest, authorization: str | None = Header(default=None)):
     token = extract_bearer_token(authorization)
     decoded = decode_token(token)
-    if ROLES.get(payload.host_email) != Role.Host:
-        raise HTTPException(status_code=400, detail="Unknown host")
-    if decoded.get("email") == payload.host_email:
-        raise HTTPException(status_code=400, detail="Cannot review yourself")
 
     REVIEWS.append(
         Review(
-            review_id=next_review_id(),
-            email=email,
-            host_email=payload.host_email,
+            id=next_review_id(),
+            timestamp=int(datetime.now().timestamp()),
+            email=decoded["email"],
             rating=payload.rating,
             text=payload.text,
         )
     )
     return {"success": True}
 
-@app.get("/get-reviews", response_model=List[Review])
-def get_reviews(authorization: str | None = Header(default=None)):
-    token = extract_bearer_token(authorization)
-    decoded = decode_token(token)
-    role = decoded.get("role")
-    if role != Role.Host:
-        raise HTTPException(status_code=403, detail="Host role required")
-    email = decoded.get("email")
-    if not email:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return [review for review in REVIEWS if review.host_email == email]
 
 @app.post("/rateplaylist")
 def rate_playlist(payload: RatePlaylistRequest, authorization: str | None = Header(default=None)):
     token = extract_bearer_token(authorization)
     decoded = decode_token(token)
     return {"success": True}
+
+
+@app.get("/host/live", response_model=List[LiveItem])
+def get_live(
+    response: Response,
+    since: int | None = None,
+    authorization: str | None = Header(default=None),
+):
+    token = extract_bearer_token(authorization)
+    decoded = decode_token(token)
+    role = decoded["role"]
+    if role != Role.Host:
+        raise HttpException(status_code=403, detail="Host role required")
+    live_items: List[dict] = []
+    for wish in WISHES:
+        data = wish.dict()
+        data["type"] = "wish"
+        live_items.append(data)
+    for review in REVIEWS:
+        data = review.dict()
+        data["type"] = "review"
+        live_items.append(data)
+    if since is not None:
+        live_items = [item for item in live_items if item["timestamp"] > since]
+    if not live_items:
+        response.status_code = 304
+        return []
+    live_items.sort(key=lambda item: item["timestamp"], reverse=True)
+    return live_items
+
 
 if __name__ == "__main__":
     import uvicorn
