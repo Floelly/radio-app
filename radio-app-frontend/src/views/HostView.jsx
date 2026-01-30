@@ -30,7 +30,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
             if (typeof item?.timestamp === "number") {
               nextMaxTimestamp = Math.max(nextMaxTimestamp, item.timestamp);
             }
-            const key = `${item?.type ?? "item"}-${item?.id ?? "unknown"}`;
+            const key = `review-${item?.id ?? "unknown"}`;
             if (!seenKeysRef.current.has(key)) {
               seenKeysRef.current.add(key);
               newItems.push(item);
@@ -96,26 +96,20 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
   return (
     <div className="flex flex-col gap-3 pt-4 pb-8">
       {items.map((item, index) => {
-        const isReview = item.type === "review";
         const ratingClass =
           item.rating === "positive" ? "text-success" : "text-error";
         const ratingLabel =
           item.rating === "positive" ? "Positiv" : "Negativ";
         return (
           <div
-            key={`${item.type}-${item.timestamp}-${index}`}
+            key={`review-${item.id ?? item.timestamp}-${index}`}
             className="rounded-2xl bg-base-200 px-4 py-3 shadow"
           >
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold truncate">{item.email}</p>
               <div className="flex items-center gap-2">
-                {isReview && (
-                  <span className={`text-xs font-semibold ${ratingClass}`}>
-                    {ratingLabel}
-                  </span>
-                )}
-                <span className="badge badge-outline badge-sm">
-                  {isReview ? "Review" : "Wunsch"}
+                <span className={`text-xs font-semibold ${ratingClass}`}>
+                  {ratingLabel}
                 </span>
               </div>
             </div>

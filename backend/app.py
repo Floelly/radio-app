@@ -55,14 +55,6 @@ class Review(BaseModel):
     rating: Literal["positive", "negative"]
     text: str = Field(min_length=1)
 
-class LiveItem(BaseModel):
-    type: Literal["wish", "review"]
-    id: int
-    timestamp: int
-    email: EmailStr
-    text: str = Field(min_length=1)
-    rating: Literal["positive", "negative"] | None = None
-
 class RatePlaylistRequest(BaseModel):
     playlist: str
     rating: Literal["positive", "negative"]
@@ -293,7 +285,7 @@ def rate_playlist(payload: RatePlaylistRequest, authorization: str | None = Head
     return {"success": True}
 
 
-@app.get("/host/live", response_model=List[LiveItem])
+@app.get("/host/live", response_model=List[Review])
 def get_live(
     response: Response,
     since: int | None = None,
@@ -303,22 +295,14 @@ def get_live(
     decoded = decode_token(token)
     role = decoded["role"]
     if role != Role.Host:
-        raise HttpException(status_code=403, detail="Host role required")
-    live_items: List[dict] = []
-    for wish in WISHES:
-        data = wish.dict()
-        data["type"] = "wish"
-        live_items.append(data)
-    for review in REVIEWS:
-        data = review.dict()
-        data["type"] = "review"
-        live_items.append(data)
+        raise HTTPException(status_code=403, detail="Host role required")
+    live_items: List[Review] = REVIEWS
     if since is not None:
-        live_items = [item for item in live_items if item["timestamp"] > since]
+        live_items = [item for item in live_items if item.timestamp > since]
     if not live_items:
         response.status_code = 304
         return []
-    live_items.sort(key=lambda item: item["timestamp"], reverse=True)
+    live_items.sort(key=lambda item: item.timestamp, reverse=True)
     return live_items
 
 
