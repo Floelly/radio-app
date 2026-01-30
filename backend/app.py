@@ -85,6 +85,12 @@ class CurrentHost(BaseModel):
 class CurrentPlaylist(BaseModel):
     playlist: str
 
+class LiveFeedback(BaseModel):
+    playlist: str
+    ratings: PlaylistVotes
+    reviews: List[HostReview]
+    updatedAt: int
+
 class Role(str, Enum):
     User = "User"
     Host = "Host"
@@ -165,6 +171,10 @@ PLAYLIST_REVIEWS: dict[str, PlaylistVotes] = {
     "90s": PlaylistVotes(positive=33, negative=12),
     "Summer": PlaylistVotes(positive=56, negative=28),
     "Pop": PlaylistVotes(positive=49, negative=22),
+}
+
+PLAYLIST_RATINGS_UPDATED_AT: dict[str, int] = {
+    playlist: 0 for playlist in PLAYLIST_REVIEWS.keys()
 }
 
 WISHES: List[Wish] = [
@@ -340,10 +350,11 @@ def feedback_playlist(payload: PlaylistFeedbackRequest, authorization: str | Non
             positive=counts.positive,
             negative=counts.negative + 1,
         )
+    PLAYLIST_RATINGS_UPDATED_AT[playlist] = int(datetime.now().timestamp())
     return {"success": True}
 
 
-@app.get("/live/feedback", response_model=List[HostReview])
+@app.get("/live/feedback", response_model=LiveFeedback)
 def live_feedback(
     response: Response,
     since: int | None = None,
@@ -354,14 +365,42 @@ def live_feedback(
     role = decoded["role"]
     if role != Role.Host:
         raise HTTPException(status_code=403, detail="Host role required")
+
+    now_local = datetime.now().astimezone()
+    minute_start_local = now_local.replace(second=0, microsecond=0)
+    playlist_timestamp = int(minute_start_local.timestamp())
+    current_track = TRACKS[now_local.minute % len(TRACKS)]
+    current_playlist = current_track.playlist
+    playlist_ratings = PLAYLIST_REVIEWS.get(
+        current_playlist,
+        PlaylistVotes(positive=0, negative=0),
+    )
+    playlist_ratings_timestamp = PLAYLIST_RATINGS_UPDATED_AT.get(
+        current_playlist,
+        0,
+    )
+    latest_review_timestamp = max(
+        (item.timestamp for item in HOST_REVIEWS),
+        default=0,
+    )
+    updated_at = max(
+        playlist_timestamp,
+        playlist_ratings_timestamp,
+        latest_review_timestamp,
+    )
+
     live_items: List[HostReview] = HOST_REVIEWS
     if since is not None:
         live_items = [item for item in live_items if item.timestamp > since]
-    if not live_items:
-        response.status_code = 304
-        return []
+    if since is not None and not live_items and since >= updated_at:
+        return Response(status_code=304)
     live_items.sort(key=lambda item: item.timestamp, reverse=True)
-    return live_items
+    return LiveFeedback(
+        playlist=current_playlist,
+        ratings=playlist_ratings,
+        reviews=live_items,
+        updatedAt=updated_at,
+    )
 
 
 if __name__ == "__main__":
