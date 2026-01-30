@@ -63,8 +63,47 @@ export function PlaylistView({ loginToken, goToLogin }) {
           auch immer wir für playlist infos haben wollen
         </p>
       </div>
-      <div>
-        <p>unsere nächsten Hits:</p>
+
+      {/* Nächste Hits */}
+      <div className="w-full max-w-sm mt-4">
+        <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
+          Die nächsten Hits
+        </p>
+
+        <div className="space-y-3">
+          {/* Track 1 */}
+          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
+            <p className="text-sm font-semibold text-base-content truncate">
+              Blinding Lights
+            </p>
+            <p className="text-xs text-base-content/60 truncate">The Weeknd</p>
+          </div>
+
+          {/* Track 2 */}
+          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
+            <p className="text-sm font-semibold text-base-content truncate">
+              Levitating
+            </p>
+            <p className="text-xs text-base-content/60 truncate">Dua Lipa</p>
+          </div>
+
+          {/* Track 3 */}
+          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
+            <p className="text-sm font-semibold text-base-content truncate">
+              As It Was
+            </p>
+            <p className="text-xs text-base-content/60 truncate">
+              Harry Styles
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-base-200/80 px-4 py-3 shadow-inner border border-dashed border-base-300">
+            <div className="flex flex-col gap-1">
+              <span className="w-24 h-2 rounded-full bg-base-300/80" />
+              <span className="w-32 h-2 rounded-full bg-base-300/60" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Feedback-Bereich */}
