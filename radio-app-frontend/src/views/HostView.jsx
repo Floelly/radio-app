@@ -5,6 +5,8 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPlaylist, setCurrentPlaylist] = useState(null);
+  const [playlistRatings, setPlaylistRatings] = useState(null);
   const lastTimestampRef = useRef(0);
   const seenKeysRef = useRef(new Set());
 
@@ -17,6 +19,8 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
     lastTimestampRef.current = 0;
     seenKeysRef.current = new Set();
     setItems([]);
+    setCurrentPlaylist(null);
+    setPlaylistRatings(null);
     setIsLoading(true);
 
     const loadLive = async () => {
@@ -26,10 +30,26 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
           since: lastTimestampRef.current,
           token: loginToken,
         });
-        if (!isCancelled && Array.isArray(data) && data.length > 0) {
-          let nextMaxTimestamp = lastTimestampRef.current;
+        if (isCancelled || !data || typeof data !== "object") return;
+        if (typeof data.playlist === "string" && data.playlist.length > 0) {
+          setCurrentPlaylist(data.playlist);
+        }
+        if (
+          typeof data.ratings?.positive === "number" &&
+          typeof data.ratings?.negative === "number"
+        ) {
+          setPlaylistRatings({
+            positive: data.ratings.positive,
+            negative: data.ratings.negative,
+          });
+        }
+        let nextMaxTimestamp = lastTimestampRef.current;
+        if (typeof data.updatedAt === "number") {
+          nextMaxTimestamp = Math.max(nextMaxTimestamp, data.updatedAt);
+        }
+        if (Array.isArray(data.reviews) && data.reviews.length > 0) {
           const newItems = [];
-          for (const item of data) {
+          for (const item of data.reviews) {
             if (typeof item?.timestamp === "number") {
               nextMaxTimestamp = Math.max(nextMaxTimestamp, item.timestamp);
             }
@@ -48,6 +68,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
             });
           }
         }
+        lastTimestampRef.current = nextMaxTimestamp;
       } catch (err) {
         if (!isCancelled) {
           setError("Live-Updates konnten nicht geladen werden.");
@@ -67,56 +88,79 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
     };
   }, [loginToken, pollIntervalMs, goToLogin]);
 
-  if (isLoading && items.length === 0 && !error) {
+  if (isLoading && items.length === 0 && !error && !currentPlaylist) {
     return (
-      <div className="flex flex-col items-center justify-center pt-6 pb-8">
+      <div className="flex items-center justify-center py-8">
         <span className="loading loading-spinner loading-md text-primary" />
-        <p className="mt-4 text-sm text-base-content/70">
+        <p className="ml-4 text-sm text-base-content/70">
           Lade Live-Updates...
         </p>
       </div>
     );
   }
 
-  if (error && items.length === 0) {
+  if (error && items.length === 0 && !currentPlaylist) {
     return (
-      <div className="flex flex-col items-center justify-center pt-6 pb-8">
+      <div className="flex items-center justify-center py-8">
         <p className="text-sm text-error">{error}</p>
       </div>
     );
   }
 
-  if (items.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center pt-6 pb-8">
-        <p className="text-sm text-base-content/70">Noch keine Live-Updates.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-3 pt-4 pb-8">
-      {items.map((item, index) => {
-        const ratingClass =
-          item.rating === "positive" ? "text-success" : "text-error";
-        const ratingLabel = item.rating === "positive" ? "Positiv" : "Negativ";
-        return (
-          <div
-            key={`review-${item.id ?? item.timestamp}-${index}`}
-            className="rounded-2xl bg-base-200 px-4 py-3 shadow"
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold truncate">{item.email}</p>
-              <div className="flex items-center gap-2">
-                <span className={`text-xs font-semibold ${ratingClass}`}>
-                  {ratingLabel}
-                </span>
-              </div>
-            </div>
-            <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
+    <div className="flex h-full flex-col gap-4 overflow-hidden pt-4 pb-8">
+      <div className="mb-4 rounded-2xl bg-base-300/80 p-4 shadow">
+        <p className="text-center text-xs uppercase tracking-wide text-base-content/60">
+          Aktuelle Playlist
+        </p>
+        <div className="relative mt-2">
+          <div className="absolute left-1/10 top-1/2 -translate-y-1/2 text-lg">
+            {playlistRatings ? (
+              <span className="text-success">
+                👍 {playlistRatings.positive}
+              </span>
+            ) : (
+              <span className="text-success">👍 -</span>
+            )}
           </div>
-        );
-      })}
+          <p className="text-center text-lg font-semibold">
+            {currentPlaylist || "Unbekannt"}
+          </p>
+          <div className="absolute right-1/10 top-1/2 -translate-y-1/2 text-lg">
+            {playlistRatings ? (
+              <span className="text-error">👎 {playlistRatings.negative}</span>
+            ) : (
+              <span className="text-error">👎 -</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="flex flex-1 items-center justify-center py-4">
+          <p className="text-sm text-base-content/70">Noch keine Reviews.</p>
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
+          {items.map((item, index) => {
+            const ratingClass =
+              item.rating === "positive" ? "text-success" : "text-error";
+            const ratingLabel =
+              item.rating === "positive" ? "Positiv" : "Negativ";
+            return (
+              <div className="rounded-2xl bg-base-200 px-4 py-3 shadow">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold truncate">{item.email}</p>
+                  <span className={`text-xs font-semibold ${ratingClass}`}>
+                    {ratingLabel}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
