@@ -112,22 +112,32 @@ export function PlaylistView({ loginToken, goToLogin }) {
           Gefällt dir unsere Playlist?
         </p>
 
-        <div className="flex gap-4">
+        {loginToken ? (
+          <div className="flex gap-4">
+            <button
+              type="button"
+              className="btn btn-circle btn-success text-xl"
+              onClick={() => handleFeedback(true)}
+            >
+              👍
+            </button>
+            <button
+              type="button"
+              className="btn btn-circle btn-error text-xl"
+              onClick={() => handleFeedback(false)}
+            >
+              👎
+            </button>
+          </div>
+        ) : (
           <button
             type="button"
-            className="btn btn-circle btn-success text-xl"
-            onClick={() => handleFeedback(true)}
+            className="btn btn-outline btn-primary btn-sm mt-1"
+            onClick={() => goToLogin()}
           >
-            👍
+            Zum Login, um zu bewerten
           </button>
-          <button
-            type="button"
-            className="btn btn-circle btn-error text-xl"
-            onClick={() => handleFeedback(false)}
-          >
-            👎
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );
