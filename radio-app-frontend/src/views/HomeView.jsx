@@ -119,63 +119,97 @@ export function HomeView({ loginToken, goToLogin }) {
 
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8 min-h-full">
-      <div className="w-full max-w-sm aspect-square rounded-3xl overflow-hidden shadow-2xl bg-base-300 mb-6">
-        {coverSrc ? (
-          <img
-            src={coverSrc}
-            alt={`${track.title} Cover`}
-            onError={(e) => {
-              if (e.currentTarget.src.endsWith(fallbackCoverUrl)) return;
-              e.currentTarget.src = fallbackCoverUrl;
-            }}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-sm text-base-content/60">
-            Kein Cover
-          </div>
-        )}
+      {/* Oberer Block */}
+      <div className="w-full max-w-sm flex-1 flex flex-col items-center">
+        {/* Cover */}
+        <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-2xl bg-base-300 mb-6">
+          {coverSrc ? (
+            <img
+              src={coverSrc}
+              alt={`${track.title} Cover`}
+              onError={(e) => {
+                if (e.currentTarget.src.endsWith(fallbackCoverUrl)) return;
+                e.currentTarget.src = fallbackCoverUrl;
+              }}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-sm text-base-content/60">
+              Kein Cover
+            </div>
+          )}
+        </div>
+        {/* Track-Infos */}
+        <div className="w-full max-w-sm text-center space-y-1 mb-6">
+          <h2 className="text-xl font-semibold truncate">{track.title}</h2>
+          <p className="text-sm text-base-content/80 truncate">
+            {track.artist} · {track.album}
+            {yearText}
+          </p>
+          <p className="text-xs text-base-content/60 truncate">
+            {commentText || "Live im Radio"}
+          </p>
+        </div>
       </div>
 
-      <div className="w-full max-w-sm text-center space-y-1 mb-6">
-        <h2 className="text-xl font-semibold truncate">{track.title}</h2>
-        <p className="text-sm text-base-content/80 truncate">
-          {track.artist} · {track.album}
-          {yearText}
-        </p>
-        <p className="text-xs text-base-content/60 truncate">
-          {commentText || "Live im Radio"}
-        </p>
-      </div>
-
+      {/* Unterer Block */}
       {host && (
-        <button
-          type="button"
-          onClick={() => (loginToken ? setIsHostCardOpen(true) : goToLogin())}
-          className="absolute left-2 bottom-4 flex items-center gap-3 rounded-full bg-base-300/95 px-5 py-3 shadow-lg border border-base-300"
-        >
-          <div className="h-12 w-12 rounded-full overflow-hidden bg-base-300">
-            {hostImageSrc ? (
-              <img
-                src={hostImageSrc}
-                alt={`${host.name} Portrait`}
-                className="h-full w-full object-cover"
-              />
+        <div className="w-full max-w-sm mt-4">
+          {/* Moderator-Card */}
+          <div className="rounded-3xl bg-base-300 px-4 py-3 shadow-lg flex items-center gap-3">
+            <div className="h-12 w-12 rounded-full overflow-hidden bg-base-200 flex-shrink-0">
+              {hostImageSrc ? (
+                <img
+                  src={hostImageSrc}
+                  alt={`${host.name} Portrait`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="h-full w-full" />
+              )}
+            </div>
+            <div className="flex-1 flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold truncate">
+                  {host.name}
+                </span>
+                <span className="badge badge-success badge-sm uppercase tracking-wide ml-2">
+                  Live
+                </span>
+              </div>
+              <span className="text-xs text-base-content/60 truncate">
+                Begleitet dich durch die aktuelle Sendung
+              </span>
+            </div>
+          </div>
+          {/* Feedback-Bereich */}
+          <div className="mt-7 flex flex-col items-center">
+            <p className="text-sm text-base-content/70 mb-3 text-center">
+              Willst du {host.name || "uns"} eine Nachricht schreiben?
+            </p>
+
+            {loginToken ? (
+              <button
+                type="button"
+                className="btn btn-outline btn-primary btn-sm"
+                onClick={() => setIsHostCardOpen(true)}
+              >
+                Hallo {host.name || "uns"} ...
+              </button>
             ) : (
-              <div className="h-full w-full" />
+              <button
+                type="button"
+                className="btn btn-outline btn-primary btn-sm"
+                onClick={() => goToLogin()}
+              >
+                Zum Login, für Feedback
+              </button>
             )}
           </div>
-          <div className="flex flex-col items-center leading-tight">
-            <span className="badge badge-success badge-sm uppercase tracking-wide">
-              Live-Moderator
-            </span>
-            <span className="text-lg font-semibold truncate max-w-[12rem]">
-              {host.name}
-            </span>
-          </div>
-        </button>
+        </div>
       )}
 
+      {/* Modal */}
       {isHostCardOpen && (
         <div
           onClick={() => setIsHostCardOpen(false)}
