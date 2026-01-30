@@ -17,7 +17,7 @@ export function HomeView() {
         if (!isCancelled) {
           setError("Aktueller Titel konnte nicht geladen werden.");
           console.error(err);
-          setTrack(null)
+          setTrack(null);
         }
       }
     }
