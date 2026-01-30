@@ -42,6 +42,7 @@ export function WishASongView({ loginToken, goToLogin }) {
         type: "error",
         text: error?.detail || "An Error occured while sending request!",
       });
+      console.error(error);
     }
   };
 
