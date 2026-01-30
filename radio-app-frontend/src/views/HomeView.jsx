@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
-import { BACKEND_BASE_URL, getCurrentHost, getCurrentTrack } from "../api/auth";
+import {
+  BACKEND_BASE_URL,
+  getCurrentHost,
+  getCurrentTrack,
+  postFeedbackHost,
+} from "../api/auth";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
-export function HomeView() {
+export function HomeView({ loginToken, goToLogin }) {
   const [track, setTrack] = useState(null);
   const [host, setHost] = useState(null);
   const [error, setError] = useState(null);
   const [isHostCardOpen, setIsHostCardOpen] = useState(false);
   const [hostRating, setHostRating] = useState(null);
+  const [hostComment, setHostComment] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
@@ -50,6 +56,35 @@ export function HomeView() {
       clearInterval(interval);
     };
   }, []);
+
+  const handleSubmitHostRating = async () => {
+    if (!loginToken) {
+      goToLogin();
+      return;
+    }
+    if ((hostRating != "up" && hostRating != "down") || hostComment == "") {
+      // TODO: user exp fehlermeldung ausgeben
+      console.log("daumen fehlt oder text leer");
+      return;
+    }
+    try {
+      await postFeedbackHost({
+        data: {
+          rating: hostRating == "up" ? "positive" : "negative",
+          text: hostComment,
+        },
+        token: loginToken,
+      });
+      setHostRating(null);
+      setHostComment("");
+      setIsHostCardOpen(false);
+      // TODO: user exp positives feedback
+      console.log("yay.. feedback gesendet");
+    } catch (error) {
+      // TODO: user exp negatives feedback
+      console.error(error);
+    }
+  };
 
   if (!track && !error) {
     return (
@@ -116,7 +151,7 @@ export function HomeView() {
       {host && (
         <button
           type="button"
-          onClick={() => setIsHostCardOpen(true)}
+          onClick={() => (loginToken ? setIsHostCardOpen(true) : goToLogin())}
           className="absolute left-2 bottom-4 flex items-center gap-3 rounded-full bg-base-300/95 px-5 py-3 shadow-lg border border-base-300"
         >
           <div className="h-12 w-12 rounded-full overflow-hidden bg-base-300">
@@ -170,6 +205,8 @@ export function HomeView() {
                 rows={3}
                 placeholder="Bewertung..."
                 className="w-full min-h-[7rem] textarea textarea-bordered resize-none text-base"
+                value={hostComment}
+                onChange={(event) => setHostComment(event.target.value)}
               />
             </div>
             <div className="mt-4 w-full flex flex-col items-center">
@@ -201,6 +238,7 @@ export function HomeView() {
             <button
               type="button"
               className="mt-6 btn btn-primary btn-lg w-full self-center rounded-full"
+              onClick={() => handleSubmitHostRating()}
             >
               Bewerten
             </button>

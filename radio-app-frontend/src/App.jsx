@@ -31,7 +31,12 @@ function App() {
 
       {/* scrollbarer Mittelteil, strikt begrenzt */}
       <main className="flex-1 overflow-y-auto px-4">
-        {currentView === "home" && <HomeView />}
+        {currentView === "home" && (
+          <HomeView
+            loginToken={loginToken}
+            goToLogin={() => goToLogin("home")}
+          />
+        )}
         {currentView === "playlist" && (
           <PlaylistView
             loginToken={loginToken}
