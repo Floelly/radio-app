@@ -77,6 +77,8 @@ export const postPlaylistRating = ({ data, token = null }) => {
   return postJson("/rateplaylist", data, token && `Bearer ${token}`);
 };
 
+export const getCurrentHost = () => getJson("/current-host");
+
 export const getLive = ({ since, token }) => {
   const payload =
     typeof since === "number" && Number.isFinite(since) ? { since } : null;

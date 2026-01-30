@@ -76,6 +76,7 @@ class CurrentTrack(BaseModel):
 class CurrentHost(BaseModel):
     name: str
     email: EmailStr
+    imageUrl: str
 
 class Role(str, Enum):
     User = "User"
@@ -242,8 +243,19 @@ def current_track(
 
 
 @app.get("/current-host", response_model=CurrentHost)
-def current_host():
-    return CurrentHost(name="Peter", email="host1@radio.com")
+def current_host(
+    response: Response,
+    if_modified_since: str | None = Header(default=None, alias="If-Modified-Since"),
+):
+    response.headers["Last-Modified"] = format_datetime(datetime.now().astimezone())
+    if if_modified_since:
+        return Response(status_code=304, headers=response.headers)
+
+    return CurrentHost(
+        name="Peter",
+        email="host1@radio.com",
+        imageUrl="/cover/Peter",
+    )
 
 
 @app.get("/cover/{someid}")
