@@ -3,6 +3,7 @@ import { NavButton } from "./components/NavButton";
 import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
 import { HostView } from "./views/HostView";
+import { WishASongView } from "./views/WishASongView";
 
 function App() {
   const [currentView, setCurrentView] = useState("home");
@@ -33,7 +34,7 @@ function App() {
             userRole === "Host" ? (
               <HostView loginToken={loginToken} />
             ) : (
-              <div>Wünsche Screen (Platzhalter)</div>
+              <WishASongView loginToken={loginToken}/>
             )
           ) : (
             <LoginView

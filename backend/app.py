@@ -36,13 +36,17 @@ class RegisterResponse(BaseModel):
     success: bool
 
 class WishRequest(BaseModel):
-    text: str = Field(min_length=1)
+    artist: str
+    song: str
+    comment: str
 
 class Wish(BaseModel):
     id: int
     timestamp: int
     email: EmailStr
-    text: str = Field(min_length=1)
+    artist: str
+    song: str
+    text: str
 
 class ReviewRequest(BaseModel):
     rating: Literal["positive", "negative"]
@@ -154,12 +158,16 @@ WISHES: List[Wish] = [
         id=1,
         timestamp=1709253000,
         email="listener2@example.com",
+        song="",
+        artist="",
         text="Ich wünsche mir \"Fake Track 3\", das ist mein Lieblingssong."
     ),
     Wish(
         id=2,
         timestamp=1709256600,
         email="listener2@example.com",
+        song="Track 2",
+        artist="keine ahnung",
         text="Mach mal Track 2 an!"
     )
 ]
@@ -255,7 +263,9 @@ def wish(payload: WishRequest, authorization: str | None = Header(default=None))
             id=next_wish_id(),
             timestamp=int(datetime.now().timestamp()),
             email=decoded["email"],
-            text=payload.text
+            song=payload.song,
+            artist=payload.artist,
+            text=payload.comment
         )
     )
     return {"success": True}
