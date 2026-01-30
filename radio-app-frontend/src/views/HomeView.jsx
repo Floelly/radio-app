@@ -1,33 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { BACKEND_BASE_URL, getCurrentTrack } from "../api/auth";
 
 export function HomeView() {
   const [track, setTrack] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const initialLoadRef = useRef(true);
 
   useEffect(() => {
     let isCancelled = false;
 
     async function loadTrack() {
-      const isInitialLoad = initialLoadRef.current;
       try {
-        if (isInitialLoad) {
-          setLoading(true);
-          setError(null);
-        }
+        setError(null);
         const data = await getCurrentTrack();
-        if (!isCancelled && data) setTrack(data);
+        if (!isCancelled) setTrack(data);
       } catch (err) {
         if (!isCancelled) {
           setError("Aktueller Titel konnte nicht geladen werden.");
           console.error(err);
-        }
-      } finally {
-        if (!isCancelled && isInitialLoad) {
-          setLoading(false);
-          initialLoadRef.current = false;
+          setTrack(null)
         }
       }
     }
@@ -41,7 +31,7 @@ export function HomeView() {
     };
   }, []);
 
-  if (loading) {
+  if (!track && !error) {
     return (
       <div className="flex flex-col items-center justify-center pt-6 pb-8">
         <span className="loading loading-spinner loading-md text-primary" />
