@@ -5,24 +5,33 @@ export function WishASongView({ loginToken }) {
   const [song, setSong] = useState("");
   const [artist, setArtist] = useState("");
   const [comment, setComment] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    if (!errorMessage) return;
-    const timer = setTimeout(() => setErrorMessage(""), 3000);
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(timer);
-  }, [errorMessage]);
+  }, [toast]);
 
   const handleSubmitWish = async () => {
+    if (!song.trim() && !artist.trim() && !comment.trim()) {
+      setToast({ type: "error", text: "Bitte mindestens ein Feld ausfüllen." });
+      return;
+    }
     try {
       await postSongWish({
         data: { song, artist, comment },
         token: loginToken,
       });
+      setSong("");
+      setArtist("");
+      setComment("");
+      setToast({ type: "success", text: "Wunsch wurde gesendet!" });
     } catch (error) {
-      setErrorMessage(
-        error?.detail || "An Error occured while sending request!",
-      );
+      setToast({
+        type: "error",
+        text: error?.detail || "An Error occured while sending request!",
+      });
     }
   };
 
@@ -35,10 +44,15 @@ export function WishASongView({ loginToken }) {
         </p>
       </div>
 
-      {errorMessage && (
+      {toast && (
         <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
-          <div className="bg-red-500/90 text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line">
-            {errorMessage}
+          <div
+            className={
+              "text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line " +
+              (toast.type === "error" ? "bg-red-500/90" : "bg-green-500/90")
+            }
+          >
+            {toast.text}
           </div>
         </div>
       )}
