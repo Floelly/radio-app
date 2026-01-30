@@ -86,9 +86,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center pt-6 pb-8">
-        <p className="text-sm text-base-content/70">
-          Noch keine Live-Updates.
-        </p>
+        <p className="text-sm text-base-content/70">Noch keine Live-Updates.</p>
       </div>
     );
   }
@@ -98,8 +96,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
       {items.map((item, index) => {
         const ratingClass =
           item.rating === "positive" ? "text-success" : "text-error";
-        const ratingLabel =
-          item.rating === "positive" ? "Positiv" : "Negativ";
+        const ratingLabel = item.rating === "positive" ? "Positiv" : "Negativ";
         return (
           <div
             key={`review-${item.id ?? item.timestamp}-${index}`}
@@ -113,9 +110,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000 }) {
                 </span>
               </div>
             </div>
-            <p className="mt-2 text-sm text-base-content/80">
-              {item.text}
-            </p>
+            <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
           </div>
         );
       })}

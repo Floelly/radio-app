@@ -34,7 +34,7 @@ function App() {
             userRole === "Host" ? (
               <HostView loginToken={loginToken} />
             ) : (
-              <WishASongView loginToken={loginToken}/>
+              <WishASongView loginToken={loginToken} />
             )
           ) : (
             <LoginView

@@ -23,7 +23,7 @@ const buildError = (data) => {
 const postJson = async (path, payload, authorization = null) => {
   const headers = { "Content-Type": "application/json" };
   if (authorization) {
-    headers.Authorization = authorization
+    headers.Authorization = authorization;
   }
   const response = await fetch(`${BACKEND_BASE_URL}${path}`, {
     method: "POST",
@@ -69,10 +69,10 @@ export const get = async (path, payload, authorization) => {
 
 export const getCurrentTrack = () => getJson("/current-track");
 
-export const postSongWish = ({data, token}) => {
+export const postSongWish = ({ data, token }) => {
   const authorization = token ? `Bearer ${token}` : null;
   return postJson("/wish", data, authorization);
-}
+};
 
 export const getLive = ({ since, token }) => {
   const payload =
