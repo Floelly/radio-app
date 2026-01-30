@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { BACKEND_BASE_URL, getCurrentTrack } from "../api/auth";
 
+const fallbackCoverUrl = "src/assets/fallback-cover.png";
+
 export function HomeView() {
   const [track, setTrack] = useState(null);
   const [error, setError] = useState(null);
@@ -56,7 +58,7 @@ export function HomeView() {
   const commentText = track.comment ? `· Playlist: ${track.comment}` : "";
   const coverSrc = track.coverUrl
     ? new URL(track.coverUrl, BACKEND_BASE_URL).toString()
-    : null;
+    : fallbackCoverUrl;
 
   return (
     <div className="flex flex-col items-center pt-6 pb-8">
@@ -65,6 +67,10 @@ export function HomeView() {
           <img
             src={coverSrc}
             alt={`${track.title} Cover`}
+            onError={(e) => {
+              if (e.currentTarget.src.endsWith(fallbackCoverUrl)) return;
+              e.currentTarget.src = fallbackCoverUrl;
+            }}
             className="w-full h-full object-cover"
           />
         ) : (
