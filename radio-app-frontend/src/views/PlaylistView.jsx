@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  BACKEND_BASE_URL,
-  getCurrentPlaylist,
-  getCurrentQueue,
-  postFeedbackPlaylist,
-} from "../api/auth";
+import { BACKEND_BASE_URL } from "../api/config";
+import { postFeedbackPlaylist } from "../api/feedback";
+import { getCurrentPlaylist, getCurrentQueue } from "../api/radio";
 
 export function PlaylistView({ loginToken, goToLogin }) {
   const [toast, setToast] = useState(null);

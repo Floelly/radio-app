@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { postFeedbackHost } from "@api/auth";
+import { postFeedbackHost } from "@api/feedback";
 import { useErrorFeedback, useSuccessFeedback } from "@/context/ToastFeedbackContext";
 
 export function RateModerator({

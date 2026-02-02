@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { BACKEND_BASE_URL, getCurrentHost, getCurrentTrack } from "@api/auth";
+import { BACKEND_BASE_URL } from "@api/config";
+import { getCurrentHost, getCurrentTrack } from "@api/radio";
 import Modal from "@components/Modal";
 import { RateModerator } from "@components/view/homeview/RateModerator";
 
