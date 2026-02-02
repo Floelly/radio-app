@@ -3,6 +3,7 @@ import { postSongWish } from "@api/wish";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import { TEXTAREA_ROWS_DEFAULT, UI_TEXT } from "@config";
+import { Button } from "@components/Button";
 
 export function WishASongView() {
   const [song, setSong] = useState("");
@@ -65,13 +66,12 @@ export function WishASongView() {
         />
 
         <div className="w-full flex gap-2 mt-4">
-          <button
-            type="button"
-            className="btn btn-primary flex-1"
+          <Button
+            highlighted
+            className="flex-1"
+            text={UI_TEXT.wish.submitButton}
             onClick={handleSubmitWish}
-          >
-            {UI_TEXT.wish.submitButton}
-          </button>
+          />
         </div>
       </div>
     </div>

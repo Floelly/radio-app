@@ -11,6 +11,8 @@ import {
   TRACK_REFRESH_INTERVAL_MS,
   UI_TEXT,
 } from "@config";
+import { HeaderCard, BasicCard } from "@components/BasicCard";
+import { Button } from "@components/Button";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
@@ -105,9 +107,12 @@ export function HomeView() {
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8 min-h-full">
       {/* Oberer Block */}
-      <div className="w-full max-w-sm flex-1 flex flex-col items-center">
+      <div className="w-full max-w-sm flex-1 flex flex-col items-center gap-6">
         {/* Cover */}
-        <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-2xl bg-base-300 mb-6">
+        <HeaderCard
+          noPadding
+          className="w-full aspect-square overflow-hidden rounded-3xl"
+        >
           {coverSrc ? (
             <img
               src={coverSrc}
@@ -123,7 +128,7 @@ export function HomeView() {
               {UI_TEXT.home.noCover}
             </div>
           )}
-        </div>
+        </HeaderCard>
         {/* Track-Infos */}
         <div className="w-full max-w-sm text-center space-y-1 mb-6">
           <h2 className="text-xl font-semibold truncate">{track.title}</h2>
@@ -143,7 +148,7 @@ export function HomeView() {
       {host && (
         <div className="w-full max-w-sm mt-4">
           {/* Moderator-Card */}
-          <div className="rounded-3xl bg-base-300 px-4 py-3 shadow-lg flex items-center gap-3">
+          <BasicCard flex>
             <div className="h-12 w-12 rounded-full overflow-hidden bg-base-200 flex-shrink-0">
               {hostImageSrc ? (
                 <img
@@ -168,28 +173,24 @@ export function HomeView() {
                 {UI_TEXT.home.hostSubtitle}
               </span>
             </div>
-          </div>
+          </BasicCard>
           {/* Feedback-Bereich */}
           <div className="mt-7 flex flex-col items-center">
             <p className="text-sm text-base-content/70 mb-3 text-center">
               {UI_TEXT.home.hostMessagePrompt(hostDisplayName)}
             </p>
             {isLoggedIn ? (
-              <button
-                type="button"
-                className="btn btn-outline btn-primary btn-sm"
+              <Button
+                small
+                text={UI_TEXT.home.hostMessageButton(hostDisplayName)}
                 onClick={handleHostFeedbackClick}
-              >
-                {UI_TEXT.home.hostMessageButton(hostDisplayName)}
-              </button>
+              />
             ) : (
-              <button
-                type="button"
-                className="btn btn-outline btn-primary btn-sm"
+              <Button
+                small
+                text={UI_TEXT.home.loginForHostMessageButton}
                 onClick={() => goToLogin("home")}
-              >
-                {UI_TEXT.home.loginForHostMessageButton}
-              </button>
+              />
             )}
           </div>
         </div>

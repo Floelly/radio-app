@@ -1,4 +1,4 @@
-import { NavButton } from "./components/NavButton";
+import { NavButton } from "./components/Button";
 import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
 import { HostView } from "./views/HostView";
@@ -15,7 +15,7 @@ function App() {
   const { showSuccess } = useFeedbackContext();
 
   const notifyLoginRequired = () => {
-    goToLogin("feedback")
+    goToLogin("feedback");
     showSuccess(LOGIN_REQUIRED_TOAST_MESSAGE);
   };
 

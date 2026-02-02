@@ -3,6 +3,8 @@ import { login, register } from "@api/auth";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import { UI_TEXT } from "@config";
+import { HeaderCard } from "@components/BasicCard";
+import { Button } from "@components/Button";
 
 export function LoginView() {
   const [email, setEmail] = useState("");
@@ -53,13 +55,13 @@ export function LoginView() {
 
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8">
-      <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
+      <HeaderCard>
         <p className="text-sm text-base-content/70">
           {UI_TEXT.login.instruction}
         </p>
-      </div>
+      </HeaderCard>
 
-      <div className="w-full max-w-sm flex-1 flex flex-col justify-center mt-12">
+      <div className="w-full max-w-sm flex-1 flex flex-col mt-12 gap-2">
         <input
           type="email"
           placeholder={UI_TEXT.login.emailPlaceholder}
@@ -70,26 +72,24 @@ export function LoginView() {
         <input
           type="password"
           placeholder={UI_TEXT.login.passwordPlaceholder}
-          className="input input-bordered w-full mt-2"
+          className="input input-bordered w-full"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
 
-        <div className="w-full flex gap-2 mt-4">
-          <button
-            type="button"
-            className="btn btn-outline flex-1"
+        <div className="flex gap-2 mt-2">
+          <Button
+            subtle
+            text={UI_TEXT.login.registerButton}
+            className="flex-1"
             onClick={handleRegisterClick}
-          >
-            {UI_TEXT.login.registerButton}
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary flex-1"
+          />
+          <Button
+            highlighted
+            text={UI_TEXT.login.loginButton}
+            className="flex-1"
             onClick={handleLoginClick}
-          >
-            {UI_TEXT.login.loginButton}
-          </button>
+          />
         </div>
       </div>
     </div>

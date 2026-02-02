@@ -3,6 +3,7 @@ import { postFeedbackHost } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import { TEXTAREA_ROWS_DEFAULT, UI_TEXT } from "@config";
+import { Button, ThumbsButton } from "@components/Button";
 
 export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   const [hostRating, setHostRating] = useState(null);
@@ -43,7 +44,7 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
 
   return (
     <>
-      <div className="w-full max-w-sm flex-1 flex flex-col justify-center items-center gap-6">
+      <div className="w-full max-w-sm flex flex-col items-center gap-6">
         <div className="mx-auto h-32 w-32 rounded-full overflow-hidden bg-base-200">
           {hostImageSrc ? (
             <img src={hostImageSrc} className="h-full w-full object-cover" />
@@ -64,39 +65,23 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
           onChange={(event) => setHostComment(event.target.value)}
         />
         <div className="flex gap-4">
-          <button
-            type="button"
-            className={`btn btn-circle text-xl ${
-              hostRating === "up"
-                ? "bg-success text-white border-success"
-                : "bg-white text-base-content border-black hover:bg-white"
-            }`}
+          <ThumbsButton
+            up
             onClick={() => setHostRating("up")}
-          >
-            {UI_TEXT.common.thumbsUp}
-          </button>
-          <button
-            type="button"
-            className={`btn btn-circle text-xl ${
-              hostRating === "down"
-                ? "bg-error text-white border-error"
-                : "bg-white text-base-content border-black hover:bg-white"
-            }`}
+            active={hostRating === "up"}
+          />
+          <ThumbsButton
+            down
+            active={hostRating === "down"}
             onClick={() => setHostRating("down")}
-          >
-            {UI_TEXT.common.thumbsDown}
-          </button>
+          />
         </div>
-
-        <div className="w-full flex gap-2">
-          <button
-            type="button"
-            className="btn btn-primary flex-1"
-            onClick={() => handleSubmitHostRating()}
-          >
-            {UI_TEXT.rateModerator.submitButton}
-          </button>
-        </div>
+        <Button
+          highlighted
+          text={UI_TEXT.rateModerator.submitButton}
+          className="w-full"
+          onClick={handleSubmitHostRating}
+        />
       </div>
     </>
   );

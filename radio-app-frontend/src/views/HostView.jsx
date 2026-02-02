@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { getLiveFeedback } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
 import { HOST_FEEDBACK_POLL_INTERVAL_MS, UI_TEXT } from "@config";
+import { BasicCard, HeaderCard } from "@components/BasicCard";
 
 export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   const [items, setItems] = useState([]);
@@ -115,7 +116,7 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-hidden pt-4 pb-8">
-      <div className="mb-4 rounded-2xl bg-base-300/80 p-4 shadow">
+      <HeaderCard>
         <p className="text-center text-xs uppercase tracking-wide text-base-content/60">
           {UI_TEXT.host.currentPlaylistLabel}
         </p>
@@ -146,7 +147,7 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
             )}
           </div>
         </div>
-      </div>
+      </HeaderCard>
 
       {items.length === 0 ? (
         <div className="flex flex-1 items-center justify-center py-4">
@@ -165,11 +166,7 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
                 : UI_TEXT.host.ratingNegative;
             const reviewId = `review-${item.id}`;
             return (
-              <div
-                className="rounded-2xl bg-base-200 px-4 py-3 shadow"
-                id={reviewId}
-                key={reviewId}
-              >
+              <BasicCard id={reviewId} key={reviewId}>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold truncate">{item.email}</p>
                   <span className={`text-xs font-semibold ${ratingClass}`}>
@@ -177,7 +174,7 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
                   </span>
                 </div>
                 <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
-              </div>
+              </BasicCard>
             );
           })}
         </div>
