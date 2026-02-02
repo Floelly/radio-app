@@ -11,7 +11,7 @@ export default defineConfig({
       '@api': '/src/api',
       '@components': '/src/components',
       '@views': '/src/views',
-      '@hooks': '/src/hooks'
+      '@assets': '/src/assets'
     }
   }
 });
