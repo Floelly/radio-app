@@ -53,16 +53,16 @@ function App() {
             goToLogin={() => goToLogin("playlist")}
           />
         )}
-        {currentView === "wishes" &&
+        {currentView === "feedback" &&
           (userRole === "Host" ? (
             <HostView
               loginToken={loginToken}
-              goToLogin={() => goToLogin("wishes")}
+              goToLogin={() => goToLogin("feedback")}
             />
           ) : (
             <WishASongView
               loginToken={loginToken}
-              goToLogin={() => goToLogin("wishes")}
+              goToLogin={() => goToLogin("feedback")}
             />
           ))}
         {currentView === "login" && (
@@ -91,9 +91,9 @@ function App() {
           onClick={() => setCurrentView("playlist")}
         />
         <NavButton
-          label="Wünsche"
-          active={currentView === "wishes"}
-          onClick={() => setCurrentView("wishes")}
+          label={loginToken && userRole === "Host" ? "Feedback" : "Liedwunsch"}
+          active={currentView === "feedback"}
+          onClick={() => setCurrentView("feedback")}
         />
         <NavButton
           label={loginToken ? "User" : "Login"}
