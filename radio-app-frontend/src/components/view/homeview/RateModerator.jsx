@@ -4,22 +4,18 @@ import {
   useErrorFeedback,
   useSuccessFeedback,
 } from "@context/ToastFeedbackContext";
+import { useAppContext } from "@context/AppContext";
 
-export function RateModerator({
-  loginToken,
-  goToLogin,
-  setIsHostCardOpen,
-  hostImageSrc,
-  hostName,
-}) {
+export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   const [hostRating, setHostRating] = useState(null);
   const [hostComment, setHostComment] = useState("");
   const errorFeedback = useErrorFeedback();
   const successFeedback = useSuccessFeedback();
+  const { isLoggedIn, goToLogin, loginToken } = useAppContext();
 
   const handleSubmitHostRating = async () => {
-    if (!loginToken) {
-      goToLogin();
+    if (!isLoggedIn) {
+      goToLogin("home");
       return;
     }
     if (hostRating != "up" && hostRating != "down") {

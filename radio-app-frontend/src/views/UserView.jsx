@@ -1,4 +1,8 @@
-export function UserView({ userEmail, onLogout }) {
+import { useAppContext } from "@context/AppContext";
+
+export function UserView() {
+  const { userEmail, handleLogout } = useAppContext();
+
   return (
     <div className="flex flex-col items-center justify-center h-full py-8">
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-6 text-center">
@@ -9,7 +13,7 @@ export function UserView({ userEmail, onLogout }) {
         <button
           type="button"
           className="btn btn-outline w-full mt-6"
-          onClick={onLogout}
+          onClick={() => handleLogout()}
         >
           Logout
         </button>

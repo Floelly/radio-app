@@ -6,12 +6,14 @@ import {
   useErrorFeedback,
   useSuccessFeedback,
 } from "@context/ToastFeedbackContext";
+import { useAppContext } from "@context/AppContext";
 
-export function PlaylistView({ loginToken, goToLogin }) {
+export function PlaylistView() {
   const [playlistInfo, setPlaylistInfo] = useState(null);
   const [queue, setQueue] = useState(null);
   const errorFeedback = useErrorFeedback();
   const successFeedback = useSuccessFeedback();
+  const { isLoggedIn, goToLogin, loginToken } = useAppContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -54,11 +56,10 @@ export function PlaylistView({ loginToken, goToLogin }) {
   }, []);
 
   const handleFeedback = async (liked) => {
-    if (!loginToken) {
-      goToLogin();
+    if (!isLoggedIn) {
+      goToLogin("playlist");
       return;
     }
-
     try {
       const payload = {
         playlist: playlistInfo?.name || "standard",
@@ -190,7 +191,7 @@ export function PlaylistView({ loginToken, goToLogin }) {
           Gefällt dir unsere Playlist?
         </p>
 
-        {loginToken ? (
+        {isLoggedIn ? (
           <div className="flex gap-4">
             <button
               type="button"
@@ -211,7 +212,7 @@ export function PlaylistView({ loginToken, goToLogin }) {
           <button
             type="button"
             className="btn btn-outline btn-primary btn-sm mt-1"
-            onClick={() => goToLogin()}
+            onClick={() => goToLogin("playlist")}
           >
             Zum Login, um zu bewerten
           </button>

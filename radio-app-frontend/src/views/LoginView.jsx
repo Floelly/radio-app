@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { login, register } from "@api/auth";
 import { useErrorFeedback } from "@/context/ToastFeedbackContext";
+import { useAppContext } from "@context/AppContext";
 
-export function LoginView({
-  setLoginToken,
-  setUserEmail,
-  setUserRole,
-  onLoginSuccess,
-}) {
+export function LoginView() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const errorFeedback = useErrorFeedback();
+  const { setLoginToken, setUserEmail, setUserRole, handleLoggedIn } =
+    useAppContext();
 
   const parseJwtPayload = (token) => {
     if (!token) return null;
@@ -45,7 +43,7 @@ export function LoginView({
         setLoginToken?.(data.token);
         setUserEmail?.(parsed.email);
         setUserRole?.(parsed.role);
-        onLoginSuccess();
+        handleLoggedIn();
       }
     } catch (error) {
       errorFeedback(error?.detail || "An Error occured!");

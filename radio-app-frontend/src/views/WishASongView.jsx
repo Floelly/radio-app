@@ -4,23 +4,21 @@ import {
   useErrorFeedback,
   useSuccessFeedback,
 } from "@context/ToastFeedbackContext";
+import { useAppContext } from "@context/AppContext";
 
-export function WishASongView({ loginToken, goToLogin }) {
+export function WishASongView() {
   const [song, setSong] = useState("");
   const [artist, setArtist] = useState("");
   const [comment, setComment] = useState("");
   const errorFeedback = useErrorFeedback();
   const successFeedback = useSuccessFeedback();
+  const { loginToken, goToLogin, isLoggedIn } = useAppContext();
 
   useEffect(() => {
-    if (!loginToken) {
-      goToLogin();
+    if (!isLoggedIn) {
+      goToLogin("feedback");
     }
-  }, [loginToken, goToLogin]);
-
-  if (!loginToken) {
-    return null;
-  }
+  }, [isLoggedIn, goToLogin]);
 
   const handleSubmitWish = async () => {
     if (!song.trim() && !artist.trim() && !comment.trim()) {

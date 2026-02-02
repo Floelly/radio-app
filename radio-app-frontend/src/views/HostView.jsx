@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getLiveFeedback } from "@api/feedback";
+import { useAppContext } from "@context/AppContext";
 
-export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
+export function HostView({ pollIntervalMs = 5000 }) {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -9,12 +10,16 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
   const [playlistRatings, setPlaylistRatings] = useState(null);
   const lastTimestampRef = useRef(0);
   const seenKeysRef = useRef(new Set());
+  const { loginToken, goToLogin, isLoggedIn } = useAppContext();
 
   useEffect(() => {
-    if (!loginToken) {
-      goToLogin();
+    if (!isLoggedIn) {
+      goToLogin("feedback");
       return;
     }
+  }, [goToLogin, isLoggedIn]);
+
+  useEffect(() => {
     let isCancelled = false;
     lastTimestampRef.current = 0;
     seenKeysRef.current = new Set();
@@ -86,7 +91,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
       isCancelled = true;
       clearInterval(interval);
     };
-  }, [loginToken, pollIntervalMs, goToLogin]);
+  }, [loginToken, pollIntervalMs]);
 
   if (isLoading && items.length === 0 && !error && !currentPlaylist) {
     return (

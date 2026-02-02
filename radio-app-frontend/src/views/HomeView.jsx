@@ -3,14 +3,16 @@ import { BACKEND_BASE_URL } from "@api/config";
 import { getCurrentHost, getCurrentTrack } from "@api/radio";
 import Modal from "@components/Modal";
 import { RateModerator } from "@components/view/homeview/RateModerator";
+import { useAppContext } from "@context/AppContext";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
-export function HomeView({ loginToken, goToLogin }) {
+export function HomeView() {
   const [track, setTrack] = useState(null);
   const [host, setHost] = useState(null);
   const [error, setError] = useState(null);
   const [isHostCardOpen, setIsHostCardOpen] = useState(false);
+  const { isLoggedIn, goToLogin } = useAppContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -155,7 +157,7 @@ export function HomeView({ loginToken, goToLogin }) {
               Willst du {host.name || "uns"} eine Nachricht schreiben?
             </p>
 
-            {loginToken ? (
+            {isLoggedIn ? (
               <button
                 type="button"
                 className="btn btn-outline btn-primary btn-sm"
@@ -167,7 +169,7 @@ export function HomeView({ loginToken, goToLogin }) {
               <button
                 type="button"
                 className="btn btn-outline btn-primary btn-sm"
-                onClick={() => goToLogin()}
+                onClick={() => goToLogin("home")}
               >
                 Zum Login, für Feedback
               </button>
@@ -182,8 +184,6 @@ export function HomeView({ loginToken, goToLogin }) {
           <RateModerator
             hostName={host.name}
             hostImageSrc={hostImageSrc}
-            loginToken={loginToken}
-            goToLogin={goToLogin}
             setIsHostCardOpen={setIsHostCardOpen}
           />
         </Modal>
