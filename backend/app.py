@@ -123,7 +123,7 @@ TRACKS: List[CurrentTrack] = [
         album="Fake Album 1",
         year=2011,
         duration=244,
-        coverUrl="/cover/red",
+        coverUrl="/cover/cover1",
     ),
     CurrentTrack(
         id="track_002",
@@ -132,7 +132,7 @@ TRACKS: List[CurrentTrack] = [
         album="Fake Album 2",
         year=2006,
         duration=185,
-        coverUrl="/cover/gradient",
+        coverUrl="/cover/cover2",
     ),
     CurrentTrack(
         id="track_003",
@@ -141,7 +141,7 @@ TRACKS: List[CurrentTrack] = [
         album="Fake Album 3",
         year=2024,
         duration=219,
-        coverUrl="/cover/green",
+        coverUrl="/cover/cover3",
     )
 ]
 
@@ -337,7 +337,7 @@ def current_host(
     return CurrentHost(
         name="Peter",
         email="host1@radio.com",
-        imageUrl="/cover/Peter",
+        imageUrl="/cover/moderator1",
     )
 
 
