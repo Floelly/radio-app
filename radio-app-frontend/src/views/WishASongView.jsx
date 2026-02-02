@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { postSongWish } from "@api/auth";
-import { useErrorFeedback, useSuccessFeedback } from "@/context/ToastFeedbackContext";
+import {
+  useErrorFeedback,
+  useSuccessFeedback,
+} from "@context/ToastFeedbackContext";
 
 export function WishASongView({ loginToken, goToLogin }) {
   const [song, setSong] = useState("");

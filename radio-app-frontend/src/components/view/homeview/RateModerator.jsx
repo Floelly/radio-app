@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { postFeedbackHost } from "@api/auth";
-import { useErrorFeedback, useSuccessFeedback } from "@/context/ToastFeedbackContext";
+import {
+  useErrorFeedback,
+  useSuccessFeedback,
+} from "@context/ToastFeedbackContext";
 
 export function RateModerator({
   loginToken,
