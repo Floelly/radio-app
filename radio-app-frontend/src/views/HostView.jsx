@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getLiveFeedback } from "../api/auth";
+import { getLiveFeedback } from "@api/auth";
 
 export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
   const [items, setItems] = useState([]);
