@@ -93,7 +93,9 @@ function App() {
         <NavButton
           label={loginToken && userRole === "Host" ? "Feedback" : "Liedwunsch"}
           active={currentView === "feedback"}
-          onClick={() => setCurrentView("feedback")}
+          onClick={() =>
+            loginToken ? setCurrentView("feedback") : goToLogin("feedback")
+          }
         />
         <NavButton
           label={loginToken ? "User" : "Login"}
