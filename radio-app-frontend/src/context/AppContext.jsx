@@ -5,7 +5,8 @@ const AppContext = createContext();
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = () => {
   const context = useContext(AppContext);
-  if (!context) throw new Error("useAuth must be inside AppContextProvider");
+  if (!context)
+    throw new Error("useAppContext must be inside AppContextProvider");
   return context;
 };
 
