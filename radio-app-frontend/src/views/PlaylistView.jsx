@@ -64,6 +64,23 @@ export function PlaylistView({ loginToken, goToLogin }) {
         </p>
       </div>
 
+      {/* Aktueller Hit */}
+      <div className="w-full max-w-sm mt-4">
+        <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
+          JETZT ZU HÖREN
+        </p>
+
+        <div className="space-y-3">
+          {/* Track 1 */}
+          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
+            <p className="text-sm font-semibold text-base-content truncate">
+              Miau Miau Miau
+            </p>
+            <p className="text-xs text-base-content/60 truncate">Katze</p>
+          </div>
+        </div>
+      </div>
+
       {/* Nächste Hits */}
       <div className="w-full max-w-sm mt-4">
         <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
