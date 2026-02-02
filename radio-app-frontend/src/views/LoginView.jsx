@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { login, register } from "@api/auth";
-import { useErrorFeedback } from "@context/ToastContext";
+import { useErrorFeedback } from "@/context/ToastFeedbackContext";
 
 export function LoginView({
   setLoginToken,
