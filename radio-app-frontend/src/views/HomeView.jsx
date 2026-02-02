@@ -3,8 +3,9 @@ import {
   BACKEND_BASE_URL,
   getCurrentHost,
   getCurrentTrack,
-  postFeedbackHost,
-} from "../api/auth";
+} from "@api/auth";
+import Modal from "@components/Modal";
+import { RateModerator } from "@components/view/homeview/RateModerator";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
@@ -13,8 +14,13 @@ export function HomeView({ loginToken, goToLogin }) {
   const [host, setHost] = useState(null);
   const [error, setError] = useState(null);
   const [isHostCardOpen, setIsHostCardOpen] = useState(false);
-  const [hostRating, setHostRating] = useState(null);
-  const [hostComment, setHostComment] = useState("");
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -57,34 +63,7 @@ export function HomeView({ loginToken, goToLogin }) {
     };
   }, []);
 
-  const handleSubmitHostRating = async () => {
-    if (!loginToken) {
-      goToLogin();
-      return;
-    }
-    if ((hostRating != "up" && hostRating != "down") || hostComment == "") {
-      // TODO: user exp fehlermeldung ausgeben
-      console.log("daumen fehlt oder text leer");
-      return;
-    }
-    try {
-      await postFeedbackHost({
-        data: {
-          rating: hostRating == "up" ? "positive" : "negative",
-          text: hostComment,
-        },
-        token: loginToken,
-      });
-      setHostRating(null);
-      setHostComment("");
-      setIsHostCardOpen(false);
-      // TODO: user exp positives feedback
-      console.log("yay.. feedback gesendet");
-    } catch (error) {
-      // TODO: user exp negatives feedback
-      console.error(error);
-    }
-  };
+  
 
   if (!track && !error) {
     return (
@@ -119,6 +98,19 @@ export function HomeView({ loginToken, goToLogin }) {
 
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8 min-h-full">
+      {/* Toast */}
+      {toast && (
+        <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
+          <div
+            className={
+              "text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line " +
+              (toast.type === "error" ? "bg-red-500/90" : "bg-green-500/90")
+            }
+          >
+            {toast.text}
+          </div>
+        </div>
+      )}
       {/* Oberer Block */}
       <div className="w-full max-w-sm flex-1 flex flex-col items-center">
         {/* Cover */}
@@ -211,73 +203,16 @@ export function HomeView({ loginToken, goToLogin }) {
 
       {/* Modal */}
       {isHostCardOpen && (
-        <div
-          onClick={() => setIsHostCardOpen(false)}
-          className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-4"
-        >
-          <div
-            onClick={(event) => event.stopPropagation()}
-            className="w-full max-w-sm min-h-[18rem] rounded-2xl bg-base-100 shadow-xl px-6 pt-6 pb-10 flex flex-col"
-          >
-            <div className="mx-auto h-32 w-32 rounded-full overflow-hidden bg-base-200">
-              {hostImageSrc ? (
-                <img
-                  src={hostImageSrc}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full" />
-              )}
-            </div>
-            <div className="mt-6 w-full flex flex-col items-center">
-              <p className="text-sm text-base-content/70 mb-3">
-                Wie gefällt dir der Moderator?
-                <br />
-                Schreib ihm doch ne Nachricht.
-              </p>
-              <textarea
-                rows={3}
-                placeholder="Bewertung..."
-                className="w-full min-h-[7rem] textarea textarea-bordered resize-none text-base"
-                value={hostComment}
-                onChange={(event) => setHostComment(event.target.value)}
-              />
-            </div>
-            <div className="mt-4 w-full flex flex-col items-center">
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  className={`btn btn-circle text-xl ${
-                    hostRating === "up"
-                      ? "bg-success text-white border-success"
-                      : "bg-white text-base-content border-black hover:bg-white"
-                  }`}
-                  onClick={() => setHostRating("up")}
-                >
-                  👍
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-circle text-xl ${
-                    hostRating === "down"
-                      ? "bg-error text-white border-error"
-                      : "bg-white text-base-content border-black hover:bg-white"
-                  }`}
-                  onClick={() => setHostRating("down")}
-                >
-                  👎
-                </button>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="mt-6 btn btn-primary btn-lg w-full self-center rounded-full"
-              onClick={() => handleSubmitHostRating()}
-            >
-              Bewerten
-            </button>
-          </div>
-        </div>
+        <Modal isOpen={isHostCardOpen} onClose={() => setIsHostCardOpen(false)}>
+            <RateModerator 
+              hostName={host.name}
+              hostImageSrc={hostImageSrc}
+              loginToken={loginToken}
+              goToLogin={goToLogin}
+              setToast={setToast}
+              setIsHostCardOpen={setIsHostCardOpen}
+            />
+        </Modal>
       )}
     </div>
   );
