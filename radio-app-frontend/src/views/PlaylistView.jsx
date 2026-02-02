@@ -5,6 +5,7 @@ import { getCurrentPlaylist, getCurrentQueue } from "@api/radio";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import {
+  LOGIN_REQUIRED_TOAST_MESSAGE,
   PLAYLIST_REFRESH_INTERVAL_MS,
   QUEUE_NEXT_SLICE_SIZE,
   QUEUE_REFRESH_INTERVAL_MS,
@@ -14,7 +15,7 @@ export function PlaylistView() {
   const [playlistInfo, setPlaylistInfo] = useState(null);
   const [queue, setQueue] = useState(null);
   const { showError, showSuccess } = useFeedbackContext();
-  const { isLoggedIn, goToLogin, loginToken } = useAppContext();
+  const { isLoggedIn, loginToken } = useAppContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -59,7 +60,7 @@ export function PlaylistView() {
 
   const handleFeedback = async (liked) => {
     if (!isLoggedIn) {
-      goToLogin("playlist");
+      showError(LOGIN_REQUIRED_TOAST_MESSAGE);
       return;
     }
     try {
@@ -193,32 +194,22 @@ export function PlaylistView() {
           Gefällt dir unsere Playlist?
         </p>
 
-        {isLoggedIn ? (
-          <div className="flex gap-4">
-            <button
-              type="button"
-              className="btn btn-circle btn-success text-xl"
-              onClick={() => handleFeedback(true)}
-            >
-              👍
-            </button>
-            <button
-              type="button"
-              className="btn btn-circle btn-error text-xl"
-              onClick={() => handleFeedback(false)}
-            >
-              👎
-            </button>
-          </div>
-        ) : (
+        <div className="flex gap-4">
           <button
             type="button"
-            className="btn btn-outline btn-primary btn-sm mt-1"
-            onClick={() => goToLogin("playlist")}
+            className="btn btn-circle btn-success text-xl"
+            onClick={() => handleFeedback(true)}
           >
-            Zum Login, um zu bewerten
+            👍
           </button>
-        )}
+          <button
+            type="button"
+            className="btn btn-circle btn-error text-xl"
+            onClick={() => handleFeedback(false)}
+          >
+            👎
+          </button>
+        </div>
       </div>
     </div>
   );

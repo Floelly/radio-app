@@ -7,6 +7,7 @@ import { PlaylistView } from "./views/PlaylistView";
 import { UserView } from "./views/UserView";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
+import { LOGIN_REQUIRED_TOAST_MESSAGE } from "@config";
 
 function App() {
   const { currentView, isLoggedIn, goToLogin, userRole, setCurrentView } =
@@ -14,7 +15,7 @@ function App() {
   const { showError } = useFeedbackContext();
 
   const notifyLoginRequired = () => {
-    showError("Bitte zuerst einloggen.");
+    showError(LOGIN_REQUIRED_TOAST_MESSAGE);
   };
 
   const renderView = (currentView, userRole) => {

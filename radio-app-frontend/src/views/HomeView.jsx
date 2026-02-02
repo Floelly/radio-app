@@ -4,7 +4,9 @@ import { getCurrentHost, getCurrentTrack } from "@api/radio";
 import Modal from "@components/Modal";
 import { RateModerator } from "@components/view/homeview/RateModerator";
 import { useAppContext } from "@context/AppContext";
+import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import {
+  LOGIN_REQUIRED_TOAST_MESSAGE,
   HOST_REFRESH_INTERVAL_MS,
   TRACK_REFRESH_INTERVAL_MS,
 } from "@config";
@@ -16,7 +18,8 @@ export function HomeView() {
   const [host, setHost] = useState(null);
   const [error, setError] = useState(null);
   const [isHostCardOpen, setIsHostCardOpen] = useState(false);
-  const { isLoggedIn, goToLogin } = useAppContext();
+  const { isLoggedIn } = useAppContext();
+  const { showError } = useFeedbackContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -89,6 +92,13 @@ export function HomeView() {
     host?.imageUrl && host.imageUrl.length > 0
       ? new URL(host.imageUrl, BACKEND_BASE_URL).toString()
       : null;
+  const handleHostFeedbackClick = () => {
+    if (!isLoggedIn) {
+      showError(LOGIN_REQUIRED_TOAST_MESSAGE);
+      return;
+    }
+    setIsHostCardOpen(true);
+  };
 
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8 min-h-full">
@@ -161,23 +171,13 @@ export function HomeView() {
               Willst du {host.name || "uns"} eine Nachricht schreiben?
             </p>
 
-            {isLoggedIn ? (
-              <button
-                type="button"
-                className="btn btn-outline btn-primary btn-sm"
-                onClick={() => setIsHostCardOpen(true)}
-              >
-                Hallo {host.name || "uns"} ...
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-outline btn-primary btn-sm"
-                onClick={() => goToLogin("home")}
-              >
-                Zum Login, für Feedback
-              </button>
-            )}
+            <button
+              type="button"
+              className="btn btn-outline btn-primary btn-sm"
+              onClick={handleHostFeedbackClick}
+            >
+              Hallo {host.name || "uns"} ...
+            </button>
           </div>
         </div>
       )}
