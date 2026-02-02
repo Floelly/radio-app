@@ -5,11 +5,13 @@ import { LoginView } from "./views/LoginView";
 import { HostView } from "./views/HostView";
 import { WishASongView } from "./views/WishASongView";
 import { PlaylistView } from "./views/PlaylistView";
+import { UserView } from "./views/UserView";
 
 function App() {
   const [currentView, setCurrentView] = useState("home");
   const [returnToView, setReturnToView] = useState(null);
   const [loginToken, setLoginToken] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
   const goToLogin = (fromView = "home") => {
@@ -20,6 +22,14 @@ function App() {
   const handleLoggedIn = () => {
     setCurrentView(returnToView || "home");
     setReturnToView(null);
+  };
+
+  const handleLogout = () => {
+    setLoginToken(null);
+    setUserEmail(null);
+    setUserRole(null);
+    setReturnToView(null);
+    setCurrentView("login");
   };
 
   return (
@@ -58,9 +68,13 @@ function App() {
         {currentView === "login" && (
           <LoginView
             setLoginToken={setLoginToken}
+            setUserEmail={setUserEmail}
             setUserRole={setUserRole}
             onLoginSuccess={handleLoggedIn}
           />
+        )}
+        {currentView === "user" && (
+          <UserView userEmail={userEmail} onLogout={handleLogout} />
         )}
       </main>
 
@@ -80,6 +94,13 @@ function App() {
           label="Wünsche"
           active={currentView === "wishes"}
           onClick={() => setCurrentView("wishes")}
+        />
+        <NavButton
+          label={loginToken ? "User" : "Login"}
+          active={loginToken ? currentView === "user" : currentView === "login"}
+          onClick={() =>
+            loginToken ? setCurrentView("user") : goToLogin(currentView)
+          }
         />
       </nav>
     </div>

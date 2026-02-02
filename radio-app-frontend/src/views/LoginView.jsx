@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { login, register } from "../api/auth";
 
-export function LoginView({ setLoginToken, setUserRole, onLoginSuccess }) {
+export function LoginView({
+  setLoginToken,
+  setUserEmail,
+  setUserRole,
+  onLoginSuccess,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,8 +47,10 @@ export function LoginView({ setLoginToken, setUserRole, onLoginSuccess }) {
       const data = await login({ email, password });
       setErrorMessage("");
       if (data?.token) {
+        const parsed = parseJwtPayload(data.token);
         setLoginToken?.(data.token);
-        setUserRole?.(parseJwtPayload(data.token).role);
+        setUserEmail?.(parsed.email);
+        setUserRole?.(parsed.role);
         onLoginSuccess();
       }
     } catch (error) {
