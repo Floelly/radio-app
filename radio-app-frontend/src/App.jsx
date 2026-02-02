@@ -12,10 +12,11 @@ import { LOGIN_REQUIRED_TOAST_MESSAGE, UI_TEXT } from "@config";
 function App() {
   const { currentView, isLoggedIn, goToLogin, userRole, setCurrentView } =
     useAppContext();
-  const { showError } = useFeedbackContext();
+  const { showSuccess } = useFeedbackContext();
 
   const notifyLoginRequired = () => {
-    showError(LOGIN_REQUIRED_TOAST_MESSAGE);
+    goToLogin("feedback")
+    showSuccess(LOGIN_REQUIRED_TOAST_MESSAGE);
   };
 
   const renderView = (currentView, userRole) => {

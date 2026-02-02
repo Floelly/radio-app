@@ -42,6 +42,7 @@ export const UI_TEXT = {
     hostNameFallback: "uns",
     hostMessagePrompt: (name) => `Willst du ${name} eine Nachricht schreiben?`,
     hostMessageButton: (name) => `Hallo ${name} ...`,
+    loginForHostMessageButton: "Zum Login, für Feedback",
     playlistCommentPrefix: "· Playlist: ",
     artistAlbumSeparator: " · ",
     formatYear: (year) => ` (${year})`,
@@ -89,6 +90,7 @@ export const UI_TEXT = {
     nowPlayingLabel: "Jetzt zu Hören",
     nextHitsLabel: "Die nächsten Hits",
     feedbackPrompt: "Gefällt dir unsere Playlist?",
+    loginForPlaylistFeedbackButton: "Zum Login, um zu bewerten",
   },
   wish: {
     emptyFieldsError: "Bitte mindestens ein Feld ausfüllen.",

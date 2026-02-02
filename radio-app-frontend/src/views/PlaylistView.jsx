@@ -16,7 +16,7 @@ export function PlaylistView() {
   const [playlistInfo, setPlaylistInfo] = useState(null);
   const [queue, setQueue] = useState(null);
   const { showError, showSuccess } = useFeedbackContext();
-  const { isLoggedIn, loginToken } = useAppContext();
+  const { isLoggedIn, loginToken, goToLogin } = useAppContext();
 
   useEffect(() => {
     let isCancelled = false;
@@ -193,23 +193,33 @@ export function PlaylistView() {
         <p className="text-sm text-base-content/70 mb-3">
           {UI_TEXT.playlist.feedbackPrompt}
         </p>
-
-        <div className="flex gap-4">
+        { isLoggedIn ? (
+          <div className="flex gap-4">
+            <button
+              type="button"
+              className="btn btn-circle btn-success text-xl"
+              onClick={() => handleFeedback(true)}
+            >
+              {UI_TEXT.common.thumbsUp}
+            </button>
+            <button
+              type="button"
+              className="btn btn-circle btn-error text-xl"
+              onClick={() => handleFeedback(false)}
+            >
+              {UI_TEXT.common.thumbsDown}
+            </button>
+          </div>
+        ) : (
           <button
             type="button"
-            className="btn btn-circle btn-success text-xl"
-            onClick={() => handleFeedback(true)}
+            className="btn btn-outline btn-primary btn-sm mt-1"
+            onClick={() => goToLogin("playlist")}
           >
-            {UI_TEXT.common.thumbsUp}
+            {UI_TEXT.playlist.loginForPlaylistFeedbackButton}
           </button>
-          <button
-            type="button"
-            className="btn btn-circle btn-error text-xl"
-            onClick={() => handleFeedback(false)}
-          >
-            {UI_TEXT.common.thumbsDown}
-          </button>
-        </div>
+        )}
+        
       </div>
     </div>
   );

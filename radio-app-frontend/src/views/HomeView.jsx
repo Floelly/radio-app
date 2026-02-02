@@ -19,7 +19,7 @@ export function HomeView() {
   const [host, setHost] = useState(null);
   const [error, setError] = useState(null);
   const [isHostCardOpen, setIsHostCardOpen] = useState(false);
-  const { isLoggedIn } = useAppContext();
+  const { isLoggedIn, goToLogin } = useAppContext();
   const { showError } = useFeedbackContext();
 
   useEffect(() => {
@@ -174,14 +174,23 @@ export function HomeView() {
             <p className="text-sm text-base-content/70 mb-3 text-center">
               {UI_TEXT.home.hostMessagePrompt(hostDisplayName)}
             </p>
-
-            <button
-              type="button"
-              className="btn btn-outline btn-primary btn-sm"
-              onClick={handleHostFeedbackClick}
-            >
-              {UI_TEXT.home.hostMessageButton(hostDisplayName)}
-            </button>
+            {isLoggedIn ? (
+              <button
+                type="button"
+                className="btn btn-outline btn-primary btn-sm"
+                onClick={handleHostFeedbackClick}
+              >
+                {UI_TEXT.home.hostMessageButton(hostDisplayName)}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-outline btn-primary btn-sm"
+                onClick={() => goToLogin("home")}
+              >
+                {UI_TEXT.home.loginForHostMessageButton}
+              </button>
+            )}
           </div>
         </div>
       )}
