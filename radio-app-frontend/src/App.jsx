@@ -6,10 +6,16 @@ import { WishASongView } from "./views/WishASongView";
 import { PlaylistView } from "./views/PlaylistView";
 import { UserView } from "./views/UserView";
 import { useAppContext } from "@context/AppContext";
+import { useFeedbackContext } from "@context/ToastFeedbackContext";
 
 function App() {
   const { currentView, isLoggedIn, goToLogin, userRole, setCurrentView } =
     useAppContext();
+  const { showError } = useFeedbackContext();
+
+  const notifyLoginRequired = () => {
+    showError("Bitte zuerst einloggen.");
+  };
 
   const renderView = (currentView, userRole) => {
     switch (currentView) {
@@ -56,7 +62,7 @@ function App() {
           label={isLoggedIn && userRole === "Host" ? "Feedback" : "Liedwunsch"}
           active={currentView === "feedback"}
           onClick={() =>
-            isLoggedIn ? setCurrentView("feedback") : goToLogin("feedback")
+            isLoggedIn ? setCurrentView("feedback") : notifyLoginRequired()
           }
         />
         <NavButton
