@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { login, register } from "@api/auth";
-import { useErrorFeedback } from "@/context/ToastFeedbackContext";
 import { useAppContext } from "@context/AppContext";
+import { useFeedbackContext } from "@context/ToastFeedbackContext";
 
 export function LoginView() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const errorFeedback = useErrorFeedback();
+  const { showError } = useFeedbackContext();
   const { setLoginToken, setUserEmail, setUserRole, handleLoggedIn } =
     useAppContext();
 
@@ -31,7 +31,7 @@ export function LoginView() {
       await register({ email, password });
       await handleLoginClick();
     } catch (error) {
-      errorFeedback(error?.detail || "An Error occured!");
+      showError(error?.detail || "An Error occured!");
     }
   };
 
@@ -46,7 +46,7 @@ export function LoginView() {
         handleLoggedIn();
       }
     } catch (error) {
-      errorFeedback(error?.detail || "An Error occured!");
+      showError(error?.detail || "An Error occured!");
     }
   };
 

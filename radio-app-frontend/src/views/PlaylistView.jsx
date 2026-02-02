@@ -2,17 +2,13 @@ import { useState, useEffect } from "react";
 import { BACKEND_BASE_URL } from "@api/config";
 import { postFeedbackPlaylist } from "@api/feedback";
 import { getCurrentPlaylist, getCurrentQueue } from "@api/radio";
-import {
-  useErrorFeedback,
-  useSuccessFeedback,
-} from "@context/ToastFeedbackContext";
 import { useAppContext } from "@context/AppContext";
+import { useFeedbackContext } from "@context/ToastFeedbackContext";
 
 export function PlaylistView() {
   const [playlistInfo, setPlaylistInfo] = useState(null);
   const [queue, setQueue] = useState(null);
-  const errorFeedback = useErrorFeedback();
-  const successFeedback = useSuccessFeedback();
+  const { showError, showSuccess } = useFeedbackContext();
   const { isLoggedIn, goToLogin, loginToken } = useAppContext();
 
   useEffect(() => {
@@ -25,7 +21,7 @@ export function PlaylistView() {
       } catch (error) {
         if (!isCancelled) {
           setPlaylistInfo(null);
-          errorFeedback(error?.detail || "Fehler beim Laden der Playlist.");
+          showError(error?.detail || "Fehler beim Laden der Playlist.");
         }
       }
     };
@@ -37,9 +33,7 @@ export function PlaylistView() {
       } catch (error) {
         if (!isCancelled) {
           setQueue(null);
-          errorFeedback(
-            error?.detail || "Fehler beim Laden der Warteschlange.",
-          );
+          showError(error?.detail || "Fehler beim Laden der Warteschlange.");
         }
       }
     };
@@ -66,9 +60,9 @@ export function PlaylistView() {
         rating: liked ? "positive" : "negative",
       };
       await postFeedbackPlaylist({ data: payload, token: loginToken });
-      successFeedback("Danke für dein Feedback! " + (liked ? "👍" : "👎"));
+      showSuccess("Danke für dein Feedback! " + (liked ? "👍" : "👎"));
     } catch (error) {
-      errorFeedback(error?.detail || "Fehler beim Senden deines Feedbacks.");
+      showError(error?.detail || "Fehler beim Senden deines Feedbacks.");
     }
   };
 

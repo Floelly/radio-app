@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import { postSongWish } from "@api/wish";
-import {
-  useErrorFeedback,
-  useSuccessFeedback,
-} from "@context/ToastFeedbackContext";
 import { useAppContext } from "@context/AppContext";
+import { useFeedbackContext } from "@context/ToastFeedbackContext";
 
 export function WishASongView() {
   const [song, setSong] = useState("");
   const [artist, setArtist] = useState("");
   const [comment, setComment] = useState("");
-  const errorFeedback = useErrorFeedback();
-  const successFeedback = useSuccessFeedback();
+  const { showError, showSuccess } = useFeedbackContext();
   const { loginToken, goToLogin, isLoggedIn } = useAppContext();
 
   useEffect(() => {
@@ -22,7 +18,7 @@ export function WishASongView() {
 
   const handleSubmitWish = async () => {
     if (!song.trim() && !artist.trim() && !comment.trim()) {
-      errorFeedback("Bitte mindestens ein Feld ausfüllen.");
+      showError("Bitte mindestens ein Feld ausfüllen.");
       return;
     }
     try {
@@ -33,9 +29,9 @@ export function WishASongView() {
       setSong("");
       setArtist("");
       setComment("");
-      successFeedback("Wunsch wurde gesendet!");
+      showSuccess("Wunsch wurde gesendet!");
     } catch (error) {
-      errorFeedback(error?.detail || "An Error occured while sending request!");
+      showError(error?.detail || "An Error occured while sending request!");
       console.error(error);
     }
   };

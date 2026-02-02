@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { postFeedbackHost } from "@api/feedback";
-import {
-  useErrorFeedback,
-  useSuccessFeedback,
-} from "@context/ToastFeedbackContext";
 import { useAppContext } from "@context/AppContext";
+import { useFeedbackContext } from "@context/ToastFeedbackContext";
 
 export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   const [hostRating, setHostRating] = useState(null);
   const [hostComment, setHostComment] = useState("");
-  const errorFeedback = useErrorFeedback();
-  const successFeedback = useSuccessFeedback();
+  const { showError, showSuccess } = useFeedbackContext();
   const { isLoggedIn, goToLogin, loginToken } = useAppContext();
 
   const handleSubmitHostRating = async () => {
@@ -19,11 +15,11 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
       return;
     }
     if (hostRating != "up" && hostRating != "down") {
-      errorFeedback("Daumen hoch oder Daumen runter?");
+      showError("Daumen hoch oder Daumen runter?");
       return;
     }
     if (hostComment == "") {
-      errorFeedback("Huch? sieht aus als hättest du noch nichts geschrieben.");
+      showError("Huch? sieht aus als hättest du noch nichts geschrieben.");
       return;
     }
     try {
@@ -37,9 +33,9 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
       setHostRating(null);
       setHostComment("");
       setIsHostCardOpen(false);
-      successFeedback("Danke für deine Nachricht!");
+      showSuccess("Danke für deine Nachricht!");
     } catch (error) {
-      errorFeedback("Fehler beim Senden deines Feedbacks.");
+      showError("Fehler beim Senden deines Feedbacks.");
       console.error(error);
     }
   };

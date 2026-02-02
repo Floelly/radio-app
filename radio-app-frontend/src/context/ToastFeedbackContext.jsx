@@ -1,12 +1,20 @@
 import {
   createContext,
-  useContext,
   useState,
+  useContext,
   useEffect,
   useCallback,
 } from "react";
 
 const ToastContext = createContext();
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useFeedbackContext = () => {
+  const context = useContext(ToastContext);
+  if (!context)
+    throw new Error("useFeedbackContext must be inside ToastFeedbackProvider");
+  return context;
+};
 
 export const ToastFeedbackProvider = ({ children }) => {
   const [toast, setToastInternal] = useState(null);
@@ -21,8 +29,18 @@ export const ToastFeedbackProvider = ({ children }) => {
     setToastInternal({ type, text });
   }, []);
 
+  const showError = useCallback(
+    (text) => showToast("error", text),
+    [showToast],
+  );
+
+  const showSuccess = useCallback(
+    (text) => showToast("success", text),
+    [showToast],
+  );
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{ showToast, showError, showSuccess }}>
       {children}
       {toast && (
         <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
@@ -38,28 +56,4 @@ export const ToastFeedbackProvider = ({ children }) => {
       )}
     </ToastContext.Provider>
   );
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useErrorFeedback = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    console.error(
-      "useSuccessFeedback must be used inside a ToastFeedbackProvider!",
-    );
-    return () => {};
-  }
-  return (text) => context.showToast("error", text);
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useSuccessFeedback = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    console.error(
-      "useSuccessFeedback must be used inside a ToastFeedbackProvider!",
-    );
-    return () => {};
-  }
-  return (text) => context.showToast("success", text);
 };
