@@ -4,14 +4,18 @@ import {
   getCurrentPlaylist,
   getCurrentQueue,
   postFeedbackPlaylist,
-} from "@api/auth";
-import { useErrorFeedback, useSuccessFeedback } from "@context/ToastContext";
+} from "../api/auth";
 
 export function PlaylistView({ loginToken, goToLogin }) {
+  const [toast, setToast] = useState(null);
   const [playlistInfo, setPlaylistInfo] = useState(null);
   const [queue, setQueue] = useState(null);
-  const errorFeedback = useErrorFeedback();
-  const successFeedback = useSuccessFeedback();
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -23,7 +27,10 @@ export function PlaylistView({ loginToken, goToLogin }) {
       } catch (error) {
         if (!isCancelled) {
           setPlaylistInfo(null);
-          errorFeedback(error?.detail || "Fehler beim Laden der Playlist.");
+          setToast({
+            type: "error",
+            text: error?.detail || "Fehler beim Laden der Playlist.",
+          });
         }
       }
     };
@@ -35,9 +42,10 @@ export function PlaylistView({ loginToken, goToLogin }) {
       } catch (error) {
         if (!isCancelled) {
           setQueue(null);
-          errorFeedback(
-            error?.detail || "Fehler beim Laden der Warteschlange.",
-          );
+          setToast({
+            type: "error",
+            text: error?.detail || "Fehler beim Laden der Warteschlange.",
+          });
         }
       }
     };
@@ -51,7 +59,7 @@ export function PlaylistView({ loginToken, goToLogin }) {
       clearInterval(playlistInterval);
       clearInterval(queueInterval);
     };
-  }, [errorFeedback]);
+  }, []);
 
   const handleFeedback = async (liked) => {
     if (!loginToken) {
@@ -65,14 +73,34 @@ export function PlaylistView({ loginToken, goToLogin }) {
         rating: liked ? "positive" : "negative",
       };
       await postFeedbackPlaylist({ data: payload, token: loginToken });
-      successFeedback("Danke für dein Feedback! " + (liked ? "👍" : "👎"));
+      setToast({
+        type: "success",
+        text: "Danke für dein Feedback! " + (liked ? "👍" : "👎"),
+      });
     } catch (error) {
-      errorFeedback(error?.detail || "Fehler beim Senden deines Feedbacks.");
+      setToast({
+        type: "error",
+        text: error?.detail || "Fehler beim Senden deines Feedbacks.",
+      });
     }
   };
 
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8">
+      {/* Toast */}
+      {toast && (
+        <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
+          <div
+            className={
+              "text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line " +
+              (toast.type === "error" ? "bg-red-500/90" : "bg-green-500/90")
+            }
+          >
+            {toast.text}
+          </div>
+        </div>
+      )}
+
       {/* Playlist-Info */}
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
         <p className="text-xs uppercase font-semibold tracking-wide">
