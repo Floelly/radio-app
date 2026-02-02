@@ -5,6 +5,7 @@ import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import { UI_TEXT } from "@config";
 import { HeaderCard } from "@components/BasicCard";
 import { Button } from "@components/Button";
+import { ContentWrapper } from "@components/Wrapper";
 
 export function LoginView() {
   const [email, setEmail] = useState("");
@@ -54,7 +55,7 @@ export function LoginView() {
   };
 
   return (
-    <div className="relative flex flex-col items-center pt-6 pb-8">
+    <ContentWrapper>
       <HeaderCard>
         <p className="text-sm text-base-content/70">
           {UI_TEXT.login.instruction}
@@ -92,6 +93,6 @@ export function LoginView() {
           />
         </div>
       </div>
-    </div>
+    </ContentWrapper>
   );
 }

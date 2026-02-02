@@ -13,6 +13,7 @@ import {
 } from "@config";
 import { HeaderCard, BasicCard } from "@components/BasicCard";
 import { Button, ThumbsButton } from "@components/Button";
+import { ContentWrapper } from "@components/Wrapper";
 
 export function PlaylistView() {
   const [playlistInfo, setPlaylistInfo] = useState(null);
@@ -80,7 +81,7 @@ export function PlaylistView() {
   };
 
   return (
-    <div className="relative flex flex-col items-center pt-6 pb-8">
+    <ContentWrapper>
       {/* Playlist-Info */}
       <HeaderCard>
         <p className="text-xs uppercase font-semibold tracking-wide text-base-content/50">
@@ -196,6 +197,6 @@ export function PlaylistView() {
           />
         )}
       </div>
-    </div>
+    </ContentWrapper>
   );
 }

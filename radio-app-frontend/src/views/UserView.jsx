@@ -2,12 +2,13 @@ import { useAppContext } from "@context/AppContext";
 import { UI_TEXT } from "@config";
 import { HeaderCard } from "@components/BasicCard";
 import { Button } from "@components/Button";
+import { ContentWrapper } from "@components/Wrapper";
 
 export function UserView() {
   const { userEmail, handleLogout } = useAppContext();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full py-8">
+    <ContentWrapper className="justify-center h-full">
       <HeaderCard>
         <p className="text-sm text-base-content/70">
           {UI_TEXT.user.loggedInAs}
@@ -21,6 +22,6 @@ export function UserView() {
           onClick={handleLogout}
         />
       </HeaderCard>
-    </div>
+    </ContentWrapper>
   );
 }

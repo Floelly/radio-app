@@ -4,6 +4,7 @@ import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import { TEXTAREA_ROWS_DEFAULT, UI_TEXT } from "@config";
 import { Button } from "@components/Button";
+import { ContentWrapper } from "@components/Wrapper";
 
 export function WishASongView() {
   const [song, setSong] = useState("");
@@ -39,7 +40,7 @@ export function WishASongView() {
   };
 
   return (
-    <div className="relative flex flex-col items-center pt-6 pb-8">
+    <ContentWrapper>
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
         <p className="text-sm text-base-content/70">{UI_TEXT.wish.intro}</p>
       </div>
@@ -74,6 +75,6 @@ export function WishASongView() {
           />
         </div>
       </div>
-    </div>
+    </ContentWrapper>
   );
 }

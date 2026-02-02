@@ -13,6 +13,7 @@ import {
 } from "@config";
 import { HeaderCard, BasicCard } from "@components/BasicCard";
 import { Button } from "@components/Button";
+import { ContentWrapper } from "@components/Wrapper";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
@@ -105,7 +106,7 @@ export function HomeView() {
   };
 
   return (
-    <div className="relative flex flex-col items-center pt-6 pb-8 min-h-full">
+    <ContentWrapper>
       {/* Oberer Block */}
       <div className="w-full max-w-sm flex-1 flex flex-col items-center gap-6">
         {/* Cover */}
@@ -206,6 +207,6 @@ export function HomeView() {
           />
         </Modal>
       )}
-    </div>
+    </ContentWrapper>
   );
 }

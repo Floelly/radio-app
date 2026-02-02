@@ -3,6 +3,7 @@ import { getLiveFeedback } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
 import { HOST_FEEDBACK_POLL_INTERVAL_MS, UI_TEXT } from "@config";
 import { BasicCard, HeaderCard } from "@components/BasicCard";
+import { ContentWrapper } from "@components/Wrapper";
 
 export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   const [items, setItems] = useState([]);
@@ -115,13 +116,13 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden pt-4 pb-8">
+    <ContentWrapper fixedHeader>
       <HeaderCard>
         <p className="text-center text-xs uppercase tracking-wide text-base-content/60">
           {UI_TEXT.host.currentPlaylistLabel}
         </p>
-        <div className="relative mt-2">
-          <div className="absolute left-1/10 top-1/2 -translate-y-1/2 text-lg">
+        <div className="flex mt-2 text-lg">
+          <div className="flex-1 text-left">
             {playlistRatings ? (
               <span className="text-success">
                 {UI_TEXT.common.thumbsUp} {playlistRatings.positive}
@@ -132,10 +133,10 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
               </span>
             )}
           </div>
-          <p className="text-center text-lg font-semibold">
+          <p className="text-center font-semibold">
             {currentPlaylist?.name || UI_TEXT.common.unknown}
           </p>
-          <div className="absolute right-1/10 top-1/2 -translate-y-1/2 text-lg">
+          <div className="flex-1 text-right">
             {playlistRatings ? (
               <span className="text-error">
                 {UI_TEXT.common.thumbsDown} {playlistRatings.negative}
@@ -148,37 +149,34 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
           </div>
         </div>
       </HeaderCard>
-
-      {items.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center py-4">
-          <p className="text-sm text-base-content/70">
+        {(items.length === 0) ? (
+          <p className="text-sm text-base-content/70 text-center">
             {UI_TEXT.host.noReviews}
           </p>
-        </div>
-      ) : (
-        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
-          {items.map((item) => {
-            const ratingClass =
-              item.rating === "positive" ? "text-success" : "text-error";
-            const ratingLabel =
-              item.rating === "positive"
-                ? UI_TEXT.host.ratingPositive
-                : UI_TEXT.host.ratingNegative;
-            const reviewId = `review-${item.id}`;
-            return (
-              <BasicCard id={reviewId} key={reviewId}>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold truncate">{item.email}</p>
-                  <span className={`text-xs font-semibold ${ratingClass}`}>
-                    {ratingLabel}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
-              </BasicCard>
-            );
-          })}
-        </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {items.map((item) => {
+              const ratingClass =
+                item.rating === "positive" ? "text-success" : "text-error";
+              const ratingLabel =
+                item.rating === "positive"
+                  ? UI_TEXT.host.ratingPositive
+                  : UI_TEXT.host.ratingNegative;
+              const reviewId = `review-${item.id}`;
+              return (
+                <BasicCard id={reviewId} key={reviewId}>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold truncate">{item.email}</p>
+                    <span className={`text-xs font-semibold ${ratingClass}`}>
+                      {ratingLabel}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
+                </BasicCard>
+              );
+            })}
+          </div>
       )}
-    </div>
+    </ContentWrapper>
   );
 }
