@@ -9,6 +9,7 @@ import {
   LOGIN_REQUIRED_TOAST_MESSAGE,
   HOST_REFRESH_INTERVAL_MS,
   TRACK_REFRESH_INTERVAL_MS,
+  UI_TEXT,
 } from "@config";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
@@ -43,7 +44,7 @@ export function HomeView() {
         if (!isCancelled) setTrack(data);
       } catch (err) {
         if (!isCancelled) {
-          setError("Aktueller Titel konnte nicht geladen werden.");
+          setError(UI_TEXT.home.loadTrackError);
           console.error(err);
           setTrack(null);
         }
@@ -67,7 +68,7 @@ export function HomeView() {
       <div className="flex flex-col items-center justify-center pt-6 pb-8">
         <span className="loading loading-spinner loading-md text-primary" />
         <p className="mt-4 text-sm text-base-content/70">
-          Lade aktuellen Titel...
+          {UI_TEXT.home.loadingTrack}
         </p>
       </div>
     );
@@ -76,18 +77,19 @@ export function HomeView() {
   if (error || !track) {
     return (
       <div className="flex flex-col items-center justify-center pt-6 pb-8">
-        <p className="text-sm text-error">
-          {error ?? "Kein aktueller Titel verfügbar."}
-        </p>
+        <p className="text-sm text-error">{error ?? UI_TEXT.home.noTrack}</p>
       </div>
     );
   }
 
-  const yearText = track.year ? ` (${track.year})` : "";
-  const commentText = track.comment ? `· Playlist: ${track.comment}` : "";
+  const yearText = track.year ? UI_TEXT.home.formatYear(track.year) : "";
+  const commentText = track.comment
+    ? `${UI_TEXT.home.playlistCommentPrefix}${track.comment}`
+    : "";
   const coverSrc = track.coverUrl
     ? new URL(track.coverUrl, BACKEND_BASE_URL).toString()
     : fallbackCoverUrl;
+  const hostDisplayName = host?.name || UI_TEXT.home.hostNameFallback;
   const hostImageSrc =
     host?.imageUrl && host.imageUrl.length > 0
       ? new URL(host.imageUrl, BACKEND_BASE_URL).toString()
@@ -109,7 +111,7 @@ export function HomeView() {
           {coverSrc ? (
             <img
               src={coverSrc}
-              alt={`${track.title} Cover`}
+              alt={UI_TEXT.home.trackCoverAlt(track.title)}
               onError={(e) => {
                 if (e.currentTarget.src.endsWith(fallbackCoverUrl)) return;
                 e.currentTarget.src = fallbackCoverUrl;
@@ -118,7 +120,7 @@ export function HomeView() {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-sm text-base-content/60">
-              Kein Cover
+              {UI_TEXT.home.noCover}
             </div>
           )}
         </div>
@@ -126,11 +128,13 @@ export function HomeView() {
         <div className="w-full max-w-sm text-center space-y-1 mb-6">
           <h2 className="text-xl font-semibold truncate">{track.title}</h2>
           <p className="text-sm text-base-content/80 truncate">
-            {track.artist} · {track.album}
+            {track.artist}
+            {UI_TEXT.home.artistAlbumSeparator}
+            {track.album}
             {yearText}
           </p>
           <p className="text-xs text-base-content/60 truncate">
-            {commentText || "Live im Radio"}
+            {commentText || UI_TEXT.home.liveRadio}
           </p>
         </div>
       </div>
@@ -144,7 +148,7 @@ export function HomeView() {
               {hostImageSrc ? (
                 <img
                   src={hostImageSrc}
-                  alt={`${host.name} Portrait`}
+                  alt={UI_TEXT.home.hostPortraitAlt(hostDisplayName)}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -157,18 +161,18 @@ export function HomeView() {
                   {host.name}
                 </span>
                 <span className="badge badge-success badge-sm uppercase tracking-wide ml-2">
-                  Live
+                  {UI_TEXT.home.liveBadge}
                 </span>
               </div>
               <span className="text-xs text-base-content/60 truncate">
-                Begleitet dich durch die aktuelle Sendung
+                {UI_TEXT.home.hostSubtitle}
               </span>
             </div>
           </div>
           {/* Feedback-Bereich */}
           <div className="mt-7 flex flex-col items-center">
             <p className="text-sm text-base-content/70 mb-3 text-center">
-              Willst du {host.name || "uns"} eine Nachricht schreiben?
+              {UI_TEXT.home.hostMessagePrompt(hostDisplayName)}
             </p>
 
             <button
@@ -176,7 +180,7 @@ export function HomeView() {
               className="btn btn-outline btn-primary btn-sm"
               onClick={handleHostFeedbackClick}
             >
-              Hallo {host.name || "uns"} ...
+              {UI_TEXT.home.hostMessageButton(hostDisplayName)}
             </button>
           </div>
         </div>
@@ -186,7 +190,7 @@ export function HomeView() {
       {isHostCardOpen && (
         <Modal isOpen={isHostCardOpen} onClose={() => setIsHostCardOpen(false)}>
           <RateModerator
-            hostName={host.name}
+            hostName={hostDisplayName}
             hostImageSrc={hostImageSrc}
             setIsHostCardOpen={setIsHostCardOpen}
           />

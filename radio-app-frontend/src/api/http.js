@@ -1,4 +1,4 @@
-import { BACKEND_BASE_URL } from "@config";
+import { BACKEND_BASE_URL, UI_TEXT } from "@config";
 
 const buildError = (data) => {
   let detail = "";
@@ -11,7 +11,7 @@ const buildError = (data) => {
       )
       .join("\n\n");
   } else {
-    detail = JSON.stringify(data || "An Error occured!");
+    detail = JSON.stringify(data || UI_TEXT.common.genericError);
   }
 
   const error = new Error(detail);

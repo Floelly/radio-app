@@ -7,7 +7,7 @@ import { PlaylistView } from "./views/PlaylistView";
 import { UserView } from "./views/UserView";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
-import { LOGIN_REQUIRED_TOAST_MESSAGE } from "@config";
+import { LOGIN_REQUIRED_TOAST_MESSAGE, UI_TEXT } from "@config";
 
 function App() {
   const { currentView, isLoggedIn, goToLogin, userRole, setCurrentView } =
@@ -39,7 +39,7 @@ function App() {
     <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
       {/* fixer Header */}
       <header className="h-14 flex items-center justify-center bg-base-200 shadow sticky top-0 z-20">
-        <h1 className="text-lg font-semibold">Radio App</h1>
+        <h1 className="text-lg font-semibold">{UI_TEXT.app.title}</h1>
       </header>
 
       {/* scrollbarer Mittelteil, strikt begrenzt */}
@@ -50,24 +50,28 @@ function App() {
       {/* fixe Bottom-Navigation */}
       <nav className="h-16 bg-base-200 border-t border-base-300 flex sticky bottom-0 z-20">
         <NavButton
-          label="Home"
+          label={UI_TEXT.app.nav.home}
           active={currentView === "home"}
           onClick={() => setCurrentView("home")}
         />
         <NavButton
-          label="Playlist"
+          label={UI_TEXT.app.nav.playlist}
           active={currentView === "playlist"}
           onClick={() => setCurrentView("playlist")}
         />
         <NavButton
-          label={isLoggedIn && userRole === "Host" ? "Feedback" : "Liedwunsch"}
+          label={
+            isLoggedIn && userRole === "Host"
+              ? UI_TEXT.app.nav.feedback
+              : UI_TEXT.app.nav.songWish
+          }
           active={currentView === "feedback"}
           onClick={() =>
             isLoggedIn ? setCurrentView("feedback") : notifyLoginRequired()
           }
         />
         <NavButton
-          label={isLoggedIn ? "User" : "Login"}
+          label={isLoggedIn ? UI_TEXT.app.nav.user : UI_TEXT.app.nav.login}
           active={isLoggedIn ? currentView === "user" : currentView === "login"}
           onClick={() =>
             isLoggedIn ? setCurrentView("user") : goToLogin(currentView)

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { postSongWish } from "@api/wish";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
-import { TEXTAREA_ROWS_DEFAULT } from "@config";
+import { TEXTAREA_ROWS_DEFAULT, UI_TEXT } from "@config";
 
 export function WishASongView() {
   const [song, setSong] = useState("");
@@ -19,7 +19,7 @@ export function WishASongView() {
 
   const handleSubmitWish = async () => {
     if (!song.trim() && !artist.trim() && !comment.trim()) {
-      showError("Bitte mindestens ein Feld ausfüllen.");
+      showError(UI_TEXT.wish.emptyFieldsError);
       return;
     }
     try {
@@ -30,9 +30,9 @@ export function WishASongView() {
       setSong("");
       setArtist("");
       setComment("");
-      showSuccess("Wunsch wurde gesendet!");
+      showSuccess(UI_TEXT.wish.success);
     } catch (error) {
-      showError(error?.detail || "An Error occured while sending request!");
+      showError(error?.detail || UI_TEXT.wish.error);
       console.error(error);
     }
   };
@@ -40,27 +40,24 @@ export function WishASongView() {
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8">
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
-        <p className="text-sm text-base-content/70">
-          Wünsche dir jetzt einen Song und mache unsere Playlist zu deiner
-          Playlist!
-        </p>
+        <p className="text-sm text-base-content/70">{UI_TEXT.wish.intro}</p>
       </div>
 
       <div className="w-full max-w-sm flex-1 flex flex-col justify-center mt-12">
         <input
-          placeholder="Lied"
+          placeholder={UI_TEXT.wish.songPlaceholder}
           className="input input-bordered w-full"
           value={song}
           onChange={(event) => setSong(event.target.value)}
         />
         <input
-          placeholder="Interpret"
+          placeholder={UI_TEXT.wish.artistPlaceholder}
           className="input input-bordered w-full mt-2"
           value={artist}
           onChange={(event) => setArtist(event.target.value)}
         />
         <textarea
-          placeholder="Zusatzinfo ..."
+          placeholder={UI_TEXT.wish.commentPlaceholder}
           className="textarea textarea-bordered w-full mt-2 resize-none"
           rows={TEXTAREA_ROWS_DEFAULT}
           value={comment}
@@ -73,7 +70,7 @@ export function WishASongView() {
             className="btn btn-primary flex-1"
             onClick={handleSubmitWish}
           >
-            Wunsch abschicken
+            {UI_TEXT.wish.submitButton}
           </button>
         </div>
       </div>

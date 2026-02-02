@@ -2,7 +2,7 @@ import { useState } from "react";
 import { postFeedbackHost } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
-import { TEXTAREA_ROWS_DEFAULT } from "@config";
+import { TEXTAREA_ROWS_DEFAULT, UI_TEXT } from "@config";
 
 export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   const [hostRating, setHostRating] = useState(null);
@@ -16,11 +16,11 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
       return;
     }
     if (hostRating != "up" && hostRating != "down") {
-      showError("Daumen hoch oder Daumen runter?");
+      showError(UI_TEXT.rateModerator.ratingRequired);
       return;
     }
     if (hostComment == "") {
-      showError("Huch? sieht aus als hättest du noch nichts geschrieben.");
+      showError(UI_TEXT.rateModerator.commentRequired);
       return;
     }
     try {
@@ -34,9 +34,9 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
       setHostRating(null);
       setHostComment("");
       setIsHostCardOpen(false);
-      showSuccess("Danke für deine Nachricht!");
+      showSuccess(UI_TEXT.rateModerator.submitSuccess);
     } catch (error) {
-      showError("Fehler beim Senden deines Feedbacks.");
+      showError(UI_TEXT.rateModerator.submitError);
       console.error(error);
     }
   };
@@ -52,13 +52,13 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
           )}
         </div>
         <p className="text-sm text-base-content/70 text-center">
-          Wie gefällt dir unser Moderator {hostName}?
+          {UI_TEXT.rateModerator.prompt(hostName)}
           <br />
-          Schreib ihm doch ne Nachricht.
+          {UI_TEXT.rateModerator.promptFollowup}
         </p>
         <textarea
           rows={TEXTAREA_ROWS_DEFAULT}
-          placeholder="Bewertung..."
+          placeholder={UI_TEXT.rateModerator.textareaPlaceholder}
           className="w-full min-h-[7rem] textarea textarea-bordered resize-none text-base"
           value={hostComment}
           onChange={(event) => setHostComment(event.target.value)}
@@ -73,7 +73,7 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
             }`}
             onClick={() => setHostRating("up")}
           >
-            👍
+            {UI_TEXT.common.thumbsUp}
           </button>
           <button
             type="button"
@@ -84,7 +84,7 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
             }`}
             onClick={() => setHostRating("down")}
           >
-            👎
+            {UI_TEXT.common.thumbsDown}
           </button>
         </div>
 
@@ -94,7 +94,7 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
             className="btn btn-primary flex-1"
             onClick={() => handleSubmitHostRating()}
           >
-            Bewerten
+            {UI_TEXT.rateModerator.submitButton}
           </button>
         </div>
       </div>

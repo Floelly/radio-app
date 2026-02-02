@@ -9,6 +9,7 @@ import {
   PLAYLIST_REFRESH_INTERVAL_MS,
   QUEUE_NEXT_SLICE_SIZE,
   QUEUE_REFRESH_INTERVAL_MS,
+  UI_TEXT,
 } from "@config";
 
 export function PlaylistView() {
@@ -27,7 +28,7 @@ export function PlaylistView() {
       } catch (error) {
         if (!isCancelled) {
           setPlaylistInfo(null);
-          showError(error?.detail || "Fehler beim Laden der Playlist.");
+          showError(error?.detail || UI_TEXT.playlist.loadError);
         }
       }
     };
@@ -39,7 +40,7 @@ export function PlaylistView() {
       } catch (error) {
         if (!isCancelled) {
           setQueue(null);
-          showError(error?.detail || "Fehler beim Laden der Warteschlange.");
+          showError(error?.detail || UI_TEXT.playlist.queueLoadError);
         }
       }
     };
@@ -69,9 +70,9 @@ export function PlaylistView() {
         rating: liked ? "positive" : "negative",
       };
       await postFeedbackPlaylist({ data: payload, token: loginToken });
-      showSuccess("Danke für dein Feedback! " + (liked ? "👍" : "👎"));
+      showSuccess(UI_TEXT.playlist.feedbackSuccess(liked));
     } catch (error) {
-      showError(error?.detail || "Fehler beim Senden deines Feedbacks.");
+      showError(error?.detail || UI_TEXT.playlist.feedbackError);
     }
   };
 
@@ -80,10 +81,10 @@ export function PlaylistView() {
       {/* Playlist-Info */}
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
         <p className="text-xs uppercase font-semibold tracking-wide">
-          Die aktuelle Playlist
+          {UI_TEXT.playlist.currentPlaylistTitle}
         </p>
         <h2 className="mt-1 text-lg font-semibold">
-          {playlistInfo?.name || "Playlist wird geladen..."}
+          {playlistInfo?.name || UI_TEXT.playlist.loadingName}
         </h2>
         <div
           className="mt-3 rounded-2xl overflow-hidden bg-base-200 h-40 bg-cover bg-center"
@@ -99,8 +100,7 @@ export function PlaylistView() {
           }
         />
         <p className="mt-3 text-xs font-semibold line-clamp-4">
-          {playlistInfo?.infotext ||
-            "Infos zur Playlist werden gerade geladen."}
+          {playlistInfo?.infotext || UI_TEXT.playlist.loadingInfoText}
         </p>
       </div>
 
@@ -108,7 +108,7 @@ export function PlaylistView() {
       <div className="w-full max-w-sm mt-4">
         <div className="mb-3">
           <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
-            Jetzt zu Hören
+            {UI_TEXT.playlist.nowPlayingLabel}
           </p>
           {queue?.current ? (
             <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm flex items-center gap-3">
@@ -144,7 +144,7 @@ export function PlaylistView() {
           )}
         </div>
         <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
-          Die nächsten Hits
+          {UI_TEXT.playlist.nextHitsLabel}
         </p>
 
         <div className="space-y-3">
@@ -191,7 +191,7 @@ export function PlaylistView() {
       {/* Feedback-Bereich */}
       <div className="w-full max-w-sm mt-10 flex flex-col items-center">
         <p className="text-sm text-base-content/70 mb-3">
-          Gefällt dir unsere Playlist?
+          {UI_TEXT.playlist.feedbackPrompt}
         </p>
 
         <div className="flex gap-4">
@@ -200,14 +200,14 @@ export function PlaylistView() {
             className="btn btn-circle btn-success text-xl"
             onClick={() => handleFeedback(true)}
           >
-            👍
+            {UI_TEXT.common.thumbsUp}
           </button>
           <button
             type="button"
             className="btn btn-circle btn-error text-xl"
             onClick={() => handleFeedback(false)}
           >
-            👎
+            {UI_TEXT.common.thumbsDown}
           </button>
         </div>
       </div>

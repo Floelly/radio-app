@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getLiveFeedback } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
-import { HOST_FEEDBACK_POLL_INTERVAL_MS } from "@config";
+import { HOST_FEEDBACK_POLL_INTERVAL_MS, UI_TEXT } from "@config";
 
 export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   const [items, setItems] = useState([]);
@@ -77,7 +77,7 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
         lastTimestampRef.current = nextMaxTimestamp;
       } catch (err) {
         if (!isCancelled) {
-          setError("Live-Updates konnten nicht geladen werden.");
+          setError(UI_TEXT.host.loadError);
           console.error(err);
         }
       } finally {
@@ -99,7 +99,7 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
       <div className="flex items-center justify-center py-8">
         <span className="loading loading-spinner loading-md text-primary" />
         <p className="ml-4 text-sm text-base-content/70">
-          Lade Live-Updates...
+          {UI_TEXT.host.loading}
         </p>
       </div>
     );
@@ -117,26 +117,32 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
     <div className="flex h-full flex-col gap-4 overflow-hidden pt-4 pb-8">
       <div className="mb-4 rounded-2xl bg-base-300/80 p-4 shadow">
         <p className="text-center text-xs uppercase tracking-wide text-base-content/60">
-          Aktuelle Playlist
+          {UI_TEXT.host.currentPlaylistLabel}
         </p>
         <div className="relative mt-2">
           <div className="absolute left-1/10 top-1/2 -translate-y-1/2 text-lg">
             {playlistRatings ? (
               <span className="text-success">
-                👍 {playlistRatings.positive}
+                {UI_TEXT.common.thumbsUp} {playlistRatings.positive}
               </span>
             ) : (
-              <span className="text-success">👍 -</span>
+              <span className="text-success">
+                {UI_TEXT.host.ratingPlaceholderPositive}
+              </span>
             )}
           </div>
           <p className="text-center text-lg font-semibold">
-            {currentPlaylist?.name || "Unbekannt"}
+            {currentPlaylist?.name || UI_TEXT.common.unknown}
           </p>
           <div className="absolute right-1/10 top-1/2 -translate-y-1/2 text-lg">
             {playlistRatings ? (
-              <span className="text-error">👎 {playlistRatings.negative}</span>
+              <span className="text-error">
+                {UI_TEXT.common.thumbsDown} {playlistRatings.negative}
+              </span>
             ) : (
-              <span className="text-error">👎 -</span>
+              <span className="text-error">
+                {UI_TEXT.host.ratingPlaceholderNegative}
+              </span>
             )}
           </div>
         </div>
@@ -144,7 +150,9 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
 
       {items.length === 0 ? (
         <div className="flex flex-1 items-center justify-center py-4">
-          <p className="text-sm text-base-content/70">Noch keine Reviews.</p>
+          <p className="text-sm text-base-content/70">
+            {UI_TEXT.host.noReviews}
+          </p>
         </div>
       ) : (
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
@@ -152,7 +160,9 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
             const ratingClass =
               item.rating === "positive" ? "text-success" : "text-error";
             const ratingLabel =
-              item.rating === "positive" ? "Positiv" : "Negativ";
+              item.rating === "positive"
+                ? UI_TEXT.host.ratingPositive
+                : UI_TEXT.host.ratingNegative;
             const reviewId = `review-${item.id}`;
             return (
               <div
