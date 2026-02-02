@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { postSongWish } from "../api/auth";
+import { postSongWish } from "@api/auth";
+import { useErrorFeedback, useSuccessFeedback } from "@context/ToastContext";
 
 export function WishASongView({ loginToken, goToLogin }) {
   const [song, setSong] = useState("");
   const [artist, setArtist] = useState("");
   const [comment, setComment] = useState("");
-  const [toast, setToast] = useState(null);
+  const errorFeedback = useErrorFeedback();
+  const successFeedback = useSuccessFeedback();
 
   useEffect(() => {
     if (!loginToken) {
@@ -13,19 +15,13 @@ export function WishASongView({ loginToken, goToLogin }) {
     }
   }, [loginToken, goToLogin]);
 
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
   if (!loginToken) {
     return null;
   }
 
   const handleSubmitWish = async () => {
     if (!song.trim() && !artist.trim() && !comment.trim()) {
-      setToast({ type: "error", text: "Bitte mindestens ein Feld ausfüllen." });
+      errorFeedback("Bitte mindestens ein Feld ausfüllen.");
       return;
     }
     try {
@@ -36,12 +32,9 @@ export function WishASongView({ loginToken, goToLogin }) {
       setSong("");
       setArtist("");
       setComment("");
-      setToast({ type: "success", text: "Wunsch wurde gesendet!" });
+      successFeedback("Wunsch wurde gesendet!");
     } catch (error) {
-      setToast({
-        type: "error",
-        text: error?.detail || "An Error occured while sending request!",
-      });
+      errorFeedback(error?.detail || "An Error occured while sending request!");
       console.error(error);
     }
   };
@@ -54,19 +47,6 @@ export function WishASongView({ loginToken, goToLogin }) {
           Playlist!
         </p>
       </div>
-
-      {toast && (
-        <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
-          <div
-            className={
-              "text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line " +
-              (toast.type === "error" ? "bg-red-500/90" : "bg-green-500/90")
-            }
-          >
-            {toast.text}
-          </div>
-        </div>
-      )}
 
       <div className="w-full max-w-sm flex-1 flex flex-col justify-center mt-12">
         <input

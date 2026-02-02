@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { login, register } from "../api/auth";
+import { useState } from "react";
+import { login, register } from "@api/auth";
+import { useErrorFeedback } from "@context/ToastContext";
 
 export function LoginView({
   setLoginToken,
@@ -9,13 +10,7 @@ export function LoginView({
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    if (!errorMessage) return;
-    const timer = setTimeout(() => setErrorMessage(""), 3000);
-    return () => clearTimeout(timer);
-  }, [errorMessage]);
+  const errorFeedback = useErrorFeedback();
 
   const parseJwtPayload = (token) => {
     if (!token) return null;
@@ -38,14 +33,13 @@ export function LoginView({
       await register({ email, password });
       await handleLoginClick();
     } catch (error) {
-      setErrorMessage(error?.detail || "An Error occured!");
+      errorFeedback(error?.detail || "An Error occured!");
     }
   };
 
   const handleLoginClick = async () => {
     try {
       const data = await login({ email, password });
-      setErrorMessage("");
       if (data?.token) {
         const parsed = parseJwtPayload(data.token);
         setLoginToken?.(data.token);
@@ -54,7 +48,7 @@ export function LoginView({
         onLoginSuccess();
       }
     } catch (error) {
-      setErrorMessage(error?.detail || "An Error occured!");
+      errorFeedback(error?.detail || "An Error occured!");
     }
   };
 
@@ -65,14 +59,6 @@ export function LoginView({
           Bitte anmelden oder registrieren um fortzufahren.
         </p>
       </div>
-
-      {errorMessage && (
-        <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
-          <div className="bg-red-500/90 text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line">
-            {errorMessage}
-          </div>
-        </div>
-      )}
 
       <div className="w-full max-w-sm flex-1 flex flex-col justify-center mt-12">
         <input

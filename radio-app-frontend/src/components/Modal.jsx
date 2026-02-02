@@ -1,25 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  title = null, 
-  className = "",
-  children 
-}) => {
-  
+const Modal = ({ isOpen, onClose, title = null, className = "", children }) => {
   // ESC-Taste schließt Modal
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    
+
     if (isOpen) {
-      document.addEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEsc);
+      document.body.style.overflow = "hidden";
       return () => {
-        document.removeEventListener('keydown', handleEsc);
-        document.body.style.overflow = 'unset';
+        document.removeEventListener("keydown", handleEsc);
+        document.body.style.overflow = "unset";
       };
     }
   }, [isOpen, onClose]);
@@ -39,11 +32,9 @@ const Modal = ({
         {title && (
           <h3 className="text-xl font-bold text-center mb-6">{title}</h3>
         )}
-        
+
         {/* Inhalt */}
-        <div className="flex-1 flex flex-col">
-          {children}
-        </div>
+        <div className="flex-1 flex flex-col">{children}</div>
       </div>
     </div>
   );

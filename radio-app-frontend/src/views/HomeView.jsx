@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  BACKEND_BASE_URL,
-  getCurrentHost,
-  getCurrentTrack,
-} from "@api/auth";
+import { BACKEND_BASE_URL, getCurrentHost, getCurrentTrack } from "@api/auth";
 import Modal from "@components/Modal";
 import { RateModerator } from "@components/view/homeview/RateModerator";
 
@@ -14,13 +10,6 @@ export function HomeView({ loginToken, goToLogin }) {
   const [host, setHost] = useState(null);
   const [error, setError] = useState(null);
   const [isHostCardOpen, setIsHostCardOpen] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toast]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -63,8 +52,6 @@ export function HomeView({ loginToken, goToLogin }) {
     };
   }, []);
 
-  
-
   if (!track && !error) {
     return (
       <div className="flex flex-col items-center justify-center pt-6 pb-8">
@@ -98,19 +85,6 @@ export function HomeView({ loginToken, goToLogin }) {
 
   return (
     <div className="relative flex flex-col items-center pt-6 pb-8 min-h-full">
-      {/* Toast */}
-      {toast && (
-        <div className="absolute top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 px-4 pointer-events-none z-30">
-          <div
-            className={
-              "text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line " +
-              (toast.type === "error" ? "bg-red-500/90" : "bg-green-500/90")
-            }
-          >
-            {toast.text}
-          </div>
-        </div>
-      )}
       {/* Oberer Block */}
       <div className="w-full max-w-sm flex-1 flex flex-col items-center">
         {/* Cover */}
@@ -204,14 +178,13 @@ export function HomeView({ loginToken, goToLogin }) {
       {/* Modal */}
       {isHostCardOpen && (
         <Modal isOpen={isHostCardOpen} onClose={() => setIsHostCardOpen(false)}>
-            <RateModerator 
-              hostName={host.name}
-              hostImageSrc={hostImageSrc}
-              loginToken={loginToken}
-              goToLogin={goToLogin}
-              setToast={setToast}
-              setIsHostCardOpen={setIsHostCardOpen}
-            />
+          <RateModerator
+            hostName={host.name}
+            hostImageSrc={hostImageSrc}
+            loginToken={loginToken}
+            goToLogin={goToLogin}
+            setIsHostCardOpen={setIsHostCardOpen}
+          />
         </Modal>
       )}
     </div>
