@@ -5,6 +5,7 @@
       "@api/*": ["./src/api/*"],
       "@components/*": ["./src/components/*"],
       "@context/*": ["./src/context/*"],
+      "@config": ["./src/config/config.js"],
       "@assets/*": ["./src/assets/*"],
       "@views/*": ["./src/views/*"],
       "@/*": ["./src/*"]

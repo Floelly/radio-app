@@ -1,4 +1,4 @@
-import { BACKEND_BASE_URL } from "./config";
+import { BACKEND_BASE_URL } from "@config";
 
 const buildError = (data) => {
   let detail = "";

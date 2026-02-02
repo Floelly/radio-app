@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { postSongWish } from "@api/wish";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
+import { TEXTAREA_ROWS_DEFAULT } from "@config";
 
 export function WishASongView() {
   const [song, setSong] = useState("");
@@ -61,7 +62,7 @@ export function WishASongView() {
         <textarea
           placeholder="Zusatzinfo ..."
           className="textarea textarea-bordered w-full mt-2 resize-none"
-          rows={3}
+          rows={TEXTAREA_ROWS_DEFAULT}
           value={comment}
           onChange={(event) => setComment(event.target.value)}
         />

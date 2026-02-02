@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { getLiveFeedback } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
+import { HOST_FEEDBACK_POLL_INTERVAL_MS } from "@config";
 
-export function HostView({ pollIntervalMs = 5000 }) {
+export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

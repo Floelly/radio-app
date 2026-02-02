@@ -5,6 +5,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
+import { TOAST_AUTO_HIDE_MS } from "@config";
 
 const ToastContext = createContext();
 
@@ -21,7 +22,7 @@ export const ToastFeedbackProvider = ({ children }) => {
 
   useEffect(() => {
     if (!toast) return;
-    const timer = setTimeout(() => setToastInternal(null), 3000);
+    const timer = setTimeout(() => setToastInternal(null), TOAST_AUTO_HIDE_MS);
     return () => clearTimeout(timer);
   }, [toast]);
 

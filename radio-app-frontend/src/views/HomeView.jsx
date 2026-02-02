@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { BACKEND_BASE_URL } from "@api/config";
+import { BACKEND_BASE_URL } from "@config";
 import { getCurrentHost, getCurrentTrack } from "@api/radio";
 import Modal from "@components/Modal";
 import { RateModerator } from "@components/view/homeview/RateModerator";
 import { useAppContext } from "@context/AppContext";
+import {
+  HOST_REFRESH_INTERVAL_MS,
+  TRACK_REFRESH_INTERVAL_MS,
+} from "@config";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
@@ -45,8 +49,8 @@ export function HomeView() {
 
     loadHost();
     loadTrack();
-    const hostInterval = setInterval(loadHost, 30_000);
-    const interval = setInterval(loadTrack, 10_000);
+    const hostInterval = setInterval(loadHost, HOST_REFRESH_INTERVAL_MS);
+    const interval = setInterval(loadTrack, TRACK_REFRESH_INTERVAL_MS);
 
     return () => {
       isCancelled = true;

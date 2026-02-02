@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
-import { BACKEND_BASE_URL } from "@api/config";
+import { BACKEND_BASE_URL } from "@config";
 import { postFeedbackPlaylist } from "@api/feedback";
 import { getCurrentPlaylist, getCurrentQueue } from "@api/radio";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
+import {
+  PLAYLIST_REFRESH_INTERVAL_MS,
+  QUEUE_NEXT_SLICE_SIZE,
+  QUEUE_REFRESH_INTERVAL_MS,
+} from "@config";
 
 export function PlaylistView() {
   const [playlistInfo, setPlaylistInfo] = useState(null);
@@ -40,8 +45,11 @@ export function PlaylistView() {
 
     loadPlaylist();
     loadQueue();
-    const playlistInterval = setInterval(loadPlaylist, 30_000);
-    const queueInterval = setInterval(loadQueue, 10_000);
+    const playlistInterval = setInterval(
+      loadPlaylist,
+      PLAYLIST_REFRESH_INTERVAL_MS,
+    );
+    const queueInterval = setInterval(loadQueue, QUEUE_REFRESH_INTERVAL_MS);
     return () => {
       isCancelled = true;
       clearInterval(playlistInterval);
@@ -139,7 +147,7 @@ export function PlaylistView() {
         </p>
 
         <div className="space-y-3">
-          {(queue?.next || []).slice(0, 3).map((track) => (
+          {(queue?.next || []).slice(0, QUEUE_NEXT_SLICE_SIZE).map((track) => (
             <div
               key={track.id}
               className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm flex items-center gap-3"

@@ -13,6 +13,7 @@ export default defineConfig({
       "@views": "/src/views",
       "@assets": "/src/assets",
       "@context": "/src/context",
+      "@config": "/src/config/config.js",
     },
   },
 });

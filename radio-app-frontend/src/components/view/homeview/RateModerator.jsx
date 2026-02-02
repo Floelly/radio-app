@@ -2,6 +2,7 @@ import { useState } from "react";
 import { postFeedbackHost } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
+import { TEXTAREA_ROWS_DEFAULT } from "@config";
 
 export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   const [hostRating, setHostRating] = useState(null);
@@ -56,7 +57,7 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
           Schreib ihm doch ne Nachricht.
         </p>
         <textarea
-          rows={3}
+          rows={TEXTAREA_ROWS_DEFAULT}
           placeholder="Bewertung..."
           className="w-full min-h-[7rem] textarea textarea-bordered resize-none text-base"
           value={hostComment}
