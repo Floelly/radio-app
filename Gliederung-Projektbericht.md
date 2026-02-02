@@ -84,12 +84,14 @@
 - Teamarbeit und Aufgabenteilung
 - Lernfortschritte im Bereich Mobile Software Engineering
 
-5. Fazit und Ausblick (0,5–1)
+## 5. Fazit und Ausblick (0,5–1)
 - wichtigsten Erkenntnisse
 - Potenziale (zukünftige Weiterentwicklung, bestehende Systeme)
 
+
 -----------------------
-Quellen und Anhang
+-----------------------
+## Quellen und Anhang
 - Literatur
 - Architekturdiagramme
 - Mockups
