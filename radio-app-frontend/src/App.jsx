@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavButton } from "./components/NavButton";
 import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
@@ -6,31 +5,22 @@ import { HostView } from "./views/HostView";
 import { WishASongView } from "./views/WishASongView";
 import { PlaylistView } from "./views/PlaylistView";
 import { UserView } from "./views/UserView";
+import { useAppContext } from "@context/AppContext";
 
 function App() {
-  const [currentView, setCurrentView] = useState("home");
-  const [returnToView, setReturnToView] = useState(null);
-  const [loginToken, setLoginToken] = useState(null);
-  const [userEmail, setUserEmail] = useState(null);
-  const [userRole, setUserRole] = useState(null);
-
-  const goToLogin = (fromView = "home") => {
-    setReturnToView(fromView);
-    setCurrentView("login");
-  };
-
-  const handleLoggedIn = () => {
-    setCurrentView(returnToView || "home");
-    setReturnToView(null);
-  };
-
-  const handleLogout = () => {
-    setLoginToken(null);
-    setUserEmail(null);
-    setUserRole(null);
-    setReturnToView(null);
-    setCurrentView("login");
-  };
+  const {
+    currentView,
+    loginToken,
+    goToLogin,
+    userRole,
+    setLoginToken,
+    setUserEmail,
+    setUserRole,
+    handleLoggedIn,
+    handleLogout,
+    userEmail,
+    setCurrentView,
+  } = useAppContext();
 
   return (
     <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
