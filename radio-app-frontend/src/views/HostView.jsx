@@ -152,8 +152,13 @@ export function HostView({ pollIntervalMs = 5000 }) {
               item.rating === "positive" ? "text-success" : "text-error";
             const ratingLabel =
               item.rating === "positive" ? "Positiv" : "Negativ";
+            const reviewId = `review-${item.id}`;
             return (
-              <div className="rounded-2xl bg-base-200 px-4 py-3 shadow">
+              <div
+                className="rounded-2xl bg-base-200 px-4 py-3 shadow"
+                id={reviewId}
+                key={reviewId}
+              >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold truncate">{item.email}</p>
                   <span className={`text-xs font-semibold ${ratingClass}`}>
