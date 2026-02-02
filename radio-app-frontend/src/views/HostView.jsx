@@ -142,7 +142,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
         </div>
       ) : (
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
-          {items.map((item, index) => {
+          {items.map((item) => {
             const ratingClass =
               item.rating === "positive" ? "text-success" : "text-error";
             const ratingLabel =
