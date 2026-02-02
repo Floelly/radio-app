@@ -31,7 +31,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
           token: loginToken,
         });
         if (isCancelled || !data || typeof data !== "object") return;
-        if (typeof data.playlist === "string" && data.playlist.length > 0) {
+        if (data.playlist && typeof data.playlist === "object") {
           setCurrentPlaylist(data.playlist);
         }
         if (
@@ -124,7 +124,7 @@ export function HostView({ loginToken, pollIntervalMs = 5000, goToLogin }) {
             )}
           </div>
           <p className="text-center text-lg font-semibold">
-            {currentPlaylist || "Unbekannt"}
+            {currentPlaylist?.name || "Unbekannt"}
           </p>
           <div className="absolute right-1/10 top-1/2 -translate-y-1/2 text-lg">
             {playlistRatings ? (

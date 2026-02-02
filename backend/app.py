@@ -75,7 +75,6 @@ class CurrentTrack(BaseModel):
     year: int
     duration: int
     coverUrl: str
-    playlist: str
 
 class CurrentHost(BaseModel):
     name: str
@@ -83,10 +82,16 @@ class CurrentHost(BaseModel):
     imageUrl: str
 
 class CurrentPlaylist(BaseModel):
-    playlist: str
+    name: str
+    infotext: str
+    coverUrl: str
+
+class CurrentQueue(BaseModel):
+    current: CurrentTrack
+    next: List[CurrentTrack]
 
 class LiveFeedback(BaseModel):
-    playlist: str
+    playlist: CurrentPlaylist
     ratings: PlaylistVotes
     reviews: List[HostReview]
     updatedAt: int
@@ -119,7 +124,6 @@ TRACKS: List[CurrentTrack] = [
         year=2011,
         duration=244,
         coverUrl="/cover/red",
-        playlist="90s" # TODO separate endpoint?
     ),
     CurrentTrack(
         id="track_002",
@@ -129,7 +133,6 @@ TRACKS: List[CurrentTrack] = [
         year=2006,
         duration=185,
         coverUrl="/cover/gradient",
-        playlist="Summer"
     ),
     CurrentTrack(
         id="track_003",
@@ -139,9 +142,14 @@ TRACKS: List[CurrentTrack] = [
         year=2024,
         duration=219,
         coverUrl="/cover/green",
-        playlist="Pop"
     )
 ]
+
+CURRENT_PLAYLIST: CurrentPlaylist = CurrentPlaylist(
+    name = "Hitzewelle Hits",
+    infotext = "Die heißesten Tracks für heiße Tage. Diese Playlist bringt dir die ultimativen Sommer-Hits, die garantiert für gute Laune sorgen. Dreh die Lautstärke auf und lass den Sommer beginnen! ☀️🎵",
+    coverUrl = "/cover/playlist1"
+)
 
 HOST_REVIEWS: List[HostReview] = [
     HostReview(
@@ -168,9 +176,7 @@ HOST_REVIEWS: List[HostReview] = [
 ]
 
 PLAYLIST_REVIEWS: dict[str, PlaylistVotes] = {
-    "90s": PlaylistVotes(positive=33, negative=12),
-    "Summer": PlaylistVotes(positive=56, negative=28),
-    "Pop": PlaylistVotes(positive=49, negative=22),
+    "Hitzewelle Hits": PlaylistVotes(positive=56, negative=28),
 }
 
 PLAYLIST_RATINGS_UPDATED_AT: dict[str, int] = {
@@ -222,6 +228,21 @@ def next_wish_id() -> int:
     return len(WISHES) + 1
 
 
+def current_track_index(now_local: datetime) -> int:
+    return now_local.minute % len(TRACKS)
+
+
+def current_queue(now_local: datetime) -> CurrentQueue:
+    start_index = current_track_index(now_local)
+    next_tracks: List[CurrentTrack] = []
+    for offset in range(1, 4):
+        next_tracks.append(TRACKS[(start_index + offset) % len(TRACKS)])
+    return CurrentQueue(
+        current=TRACKS[start_index],
+        next=next_tracks,
+    )
+
+
 @app.post("/login", response_model=AuthenticatedUser)
 def login(payload: AuthRequest):
     stored_pw = USERS.get(payload.email)
@@ -266,14 +287,42 @@ def current_track(
 
 
 @app.get("/current-playlist", response_model=CurrentPlaylist)
-def current_playlist(
+def current_playlist_info(
     response: Response,
     if_modified_since: str | None = Header(default=None, alias="If-Modified-Since"),
 ):
-    track = current_track(response, if_modified_since)
-    if isinstance(track, Response):
-        return track
-    return CurrentPlaylist(playlist=track.playlist)
+    if if_modified_since:
+        return Response(status_code=304)
+    
+    now_local = datetime.now().astimezone()
+    minute_start_local = now_local.replace(second=0, microsecond=0)
+    minute_start_utc = minute_start_local.astimezone(timezone.utc)
+    response.headers["Last-Modified"] = format_datetime(minute_start_utc)
+
+    return CURRENT_PLAYLIST
+
+
+@app.get("/current-queue", response_model=CurrentQueue)
+def current_queue_endpoint(
+    response: Response,
+    if_modified_since: str | None = Header(default=None, alias="If-Modified-Since"),
+):
+    now_local = datetime.now().astimezone()
+    minute_start_local = now_local.replace(second=0, microsecond=0)
+    minute_start_utc = minute_start_local.astimezone(timezone.utc)
+    response.headers["Last-Modified"] = format_datetime(minute_start_utc)
+
+    if if_modified_since:
+        try:
+            ims_dt = parsedate_to_datetime(if_modified_since)
+            if ims_dt is not None and ims_dt.tzinfo is None:
+                ims_dt = ims_dt.replace(tzinfo=timezone.utc)
+            if ims_dt and ims_dt >= minute_start_utc:
+                return Response(status_code=304, headers=response.headers)
+        except (TypeError, ValueError, IndexError):
+            pass
+
+    return current_queue(now_local)
 
 
 @app.get("/current-host", response_model=CurrentHost)
@@ -370,13 +419,13 @@ def live_feedback(
     minute_start_local = now_local.replace(second=0, microsecond=0)
     playlist_timestamp = int(minute_start_local.timestamp())
     current_track = TRACKS[now_local.minute % len(TRACKS)]
-    current_playlist = current_track.playlist
+    current_playlist = CURRENT_PLAYLIST
     playlist_ratings = PLAYLIST_REVIEWS.get(
-        current_playlist,
+        current_playlist.name,
         PlaylistVotes(positive=0, negative=0),
     )
     playlist_ratings_timestamp = PLAYLIST_RATINGS_UPDATED_AT.get(
-        current_playlist,
+        current_playlist.name,
         0,
     )
     latest_review_timestamp = max(

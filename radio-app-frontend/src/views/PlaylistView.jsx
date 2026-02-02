@@ -1,14 +1,65 @@
 import { useState, useEffect } from "react";
-import { postFeedbackPlaylist } from "../api/auth";
+import {
+  BACKEND_BASE_URL,
+  getCurrentPlaylist,
+  getCurrentQueue,
+  postFeedbackPlaylist,
+} from "../api/auth";
 
 export function PlaylistView({ loginToken, goToLogin }) {
   const [toast, setToast] = useState(null);
+  const [playlistInfo, setPlaylistInfo] = useState(null);
+  const [queue, setQueue] = useState(null);
 
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const loadPlaylist = async () => {
+      try {
+        const playlistData = await getCurrentPlaylist();
+        if (!isCancelled) setPlaylistInfo(playlistData);
+      } catch (error) {
+        if (!isCancelled) {
+          setPlaylistInfo(null);
+          setToast({
+            type: "error",
+            text: error?.detail || "Fehler beim Laden der Playlist.",
+          });
+        }
+      }
+    };
+
+    const loadQueue = async () => {
+      try {
+        const queueData = await getCurrentQueue();
+        if (!isCancelled) setQueue(queueData);
+      } catch (error) {
+        if (!isCancelled) {
+          setQueue(null);
+          setToast({
+            type: "error",
+            text: error?.detail || "Fehler beim Laden der Warteschlange.",
+          });
+        }
+      }
+    };
+
+    loadPlaylist();
+    loadQueue();
+    const playlistInterval = setInterval(loadPlaylist, 30_000);
+    const queueInterval = setInterval(loadQueue, 10_000);
+    return () => {
+      isCancelled = true;
+      clearInterval(playlistInterval);
+      clearInterval(queueInterval);
+    };
+  }, []);
 
   const handleFeedback = async (liked) => {
     if (!loginToken) {
@@ -18,7 +69,7 @@ export function PlaylistView({ loginToken, goToLogin }) {
 
     try {
       const payload = {
-        playlist: "standard",
+        playlist: playlistInfo?.name || "standard",
         rating: liked ? "positive" : "negative",
       };
       await postFeedbackPlaylist({ data: payload, token: loginToken });
@@ -52,74 +103,112 @@ export function PlaylistView({ loginToken, goToLogin }) {
 
       {/* Playlist-Info */}
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
-        <p className="text-xs uppercase tracking-wide text-base-content/50">
-          Unsere aktuelle Dummy Playlist
+        <p className="text-xs uppercase font-semibold tracking-wide">
+          Die aktuelle Playlist
         </p>
-        <h2 className="mt-1 text-lg font-semibold text-base-content">
-          Energy Hits am Nachmittag
+        <h2 className="mt-1 text-lg font-semibold">
+          {playlistInfo?.name || "Playlist wird geladen..."}
         </h2>
-        <p className="mt-2 text-sm text-base-content/70 line-clamp-3">
-          Bla bla bla hier muss noch ein toller, kurzer Infotext hin... oder was
-          auch immer wir für playlist infos haben wollen
+        <div
+          className="mt-3 rounded-2xl overflow-hidden bg-base-200 h-40 bg-cover bg-center"
+          style={
+            playlistInfo?.coverUrl
+              ? {
+                  backgroundImage: `url(${new URL(
+                    playlistInfo.coverUrl,
+                    BACKEND_BASE_URL,
+                  ).toString()})`,
+                }
+              : undefined
+          }
+        />
+        <p className="mt-3 text-xs font-semibold line-clamp-4">
+          {playlistInfo?.infotext ||
+            "Infos zur Playlist werden gerade geladen."}
         </p>
-      </div>
-
-      {/* Aktueller Hit */}
-      <div className="w-full max-w-sm mt-4">
-        <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
-          JETZT ZU HÖREN
-        </p>
-
-        <div className="space-y-3">
-          {/* Track 1 */}
-          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
-            <p className="text-sm font-semibold text-base-content truncate">
-              Miau Miau Miau
-            </p>
-            <p className="text-xs text-base-content/60 truncate">Katze</p>
-          </div>
-        </div>
       </div>
 
       {/* Nächste Hits */}
       <div className="w-full max-w-sm mt-4">
+        <div className="mb-3">
+          <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
+            Jetzt zu Hören
+          </p>
+          {queue?.current ? (
+            <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm flex items-center gap-3">
+              <div
+                className="h-10 w-10 rounded-2xl bg-base-200 flex-shrink-0 bg-cover bg-center"
+                style={
+                  queue.current.coverUrl
+                    ? {
+                        backgroundImage: `url(${new URL(
+                          queue.current.coverUrl,
+                          BACKEND_BASE_URL,
+                        ).toString()})`,
+                      }
+                    : undefined
+                }
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-base-content truncate">
+                  {queue.current.title}
+                </p>
+                <p className="text-xs text-base-content/60 truncate">
+                  {queue.current.artist}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-base-200/80 px-4 py-3 shadow-inner border border-dashed border-base-300">
+              <div className="flex flex-col gap-1">
+                <span className="w-24 h-2 rounded-full bg-base-300/80" />
+                <span className="w-32 h-2 rounded-full bg-base-300/60" />
+              </div>
+            </div>
+          )}
+        </div>
         <p className="text-xs uppercase tracking-wide text-base-content/50 mb-2">
           Die nächsten Hits
         </p>
 
         <div className="space-y-3">
-          {/* Track 1 */}
-          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
-            <p className="text-sm font-semibold text-base-content truncate">
-              Blinding Lights
-            </p>
-            <p className="text-xs text-base-content/60 truncate">The Weeknd</p>
-          </div>
-
-          {/* Track 2 */}
-          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
-            <p className="text-sm font-semibold text-base-content truncate">
-              Levitating
-            </p>
-            <p className="text-xs text-base-content/60 truncate">Dua Lipa</p>
-          </div>
-
-          {/* Track 3 */}
-          <div className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm">
-            <p className="text-sm font-semibold text-base-content truncate">
-              As It Was
-            </p>
-            <p className="text-xs text-base-content/60 truncate">
-              Harry Styles
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-base-200/80 px-4 py-3 shadow-inner border border-dashed border-base-300">
-            <div className="flex flex-col gap-1">
-              <span className="w-24 h-2 rounded-full bg-base-300/80" />
-              <span className="w-32 h-2 rounded-full bg-base-300/60" />
+          {(queue?.next || []).slice(0, 3).map((track) => (
+            <div
+              key={track.id}
+              className="rounded-2xl bg-base-300/80 px-4 py-3 shadow-sm flex items-center gap-3"
+            >
+              <div
+                className="h-10 w-10 rounded-2xl bg-base-200 flex-shrink-0 bg-cover bg-center"
+                style={
+                  track.coverUrl
+                    ? {
+                        backgroundImage: `url(${new URL(
+                          track.coverUrl,
+                          BACKEND_BASE_URL,
+                        ).toString()})`,
+                      }
+                    : undefined
+                }
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-base-content truncate">
+                  {track.title}
+                </p>
+                <p className="text-xs text-base-content/60 truncate">
+                  {track.artist}
+                </p>
+              </div>
             </div>
-          </div>
+          ))}
+
+          {(!queue?.next || queue.next.length === 0) && (
+            <div className="rounded-2xl bg-base-200/80 px-4 py-3 shadow-inner border border-dashed border-base-300">
+              <div className="flex flex-col gap-1">
+                <span className="w-24 h-2 rounded-full bg-base-300/80" />
+                <span className="w-32 h-2 rounded-full bg-base-300/60" />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
