@@ -1,9 +1,11 @@
+import { API_ENDPOINT } from "@/config/api-config";
 import { getJson } from "./http";
 
-export const getCurrentTrack = () => getJson("/current-track");
+export const getCurrentTrack = () => getJson(API_ENDPOINT.getCurrentTrack);
 
-export const getCurrentPlaylist = () => getJson("/current-playlist");
+export const getCurrentPlaylist = () =>
+  getJson(API_ENDPOINT.getCurrentPlaylist);
 
-export const getCurrentQueue = () => getJson("/current-queue");
+export const getCurrentQueue = () => getJson(API_ENDPOINT.getCurrentQueue);
 
-export const getCurrentHost = () => getJson("/current-host");
+export const getCurrentHost = () => getJson(API_ENDPOINT.getCurrentHost);
