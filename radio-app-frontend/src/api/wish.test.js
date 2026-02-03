@@ -7,6 +7,9 @@ vi.mock("@/config/api-config", () => ({
     wishASong: "/api/wishes/songs",
   },
 }));
+vi.mock("./auth", () => ({
+  attachToken: vi.fn((token) => `WUFF ${token}`),
+}));
 
 describe("postSongWish", () => {
   beforeEach(() => {
@@ -26,7 +29,7 @@ describe("postSongWish", () => {
     expect(postJsonSpy).toHaveBeenCalledWith(
       "/api/wishes/songs",
       data,
-      "Bearer abc123",
+      "WUFF abc123",
     );
     expect(result).toEqual({ success: true });
   });

@@ -8,3 +8,7 @@ export const register = async ({ email, password }) => {
 export const login = async ({ email, password }) => {
   return postJson(API_ENDPOINT.postLogin, { email, password });
 };
+
+export const attachToken = (token) => {
+  return `Bearer ${token}`;
+};
