@@ -7,8 +7,15 @@ export const QUEUE_REFRESH_INTERVAL_MS = 10_000;
 export const TRACK_REFRESH_INTERVAL_MS = 10_000;
 export const PLAYLIST_REFRESH_INTERVAL_MS = 30_000;
 export const HOST_REFRESH_INTERVAL_MS = 30_000;
+const ENV =
+  (typeof import.meta !== "undefined" && import.meta.env) ||
+  (typeof process !== "undefined" && process.env) ||
+  {};
+
 export const BACKEND_BASE_URL =
-  import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:8080";
+  ENV.VITE_BACKEND_BASE_URL || "http://localhost:8080";
+export const FRONTEND_BASE_URL =
+  ENV.VITE_FRONTEND_BASE_URL || "http://localhost:5173";
 
 const UI_COMMON = {
   genericError: "An Error occured!",
