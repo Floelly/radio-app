@@ -84,6 +84,7 @@ export function PlaylistView() {
 
   return (
     <ContentWrapper>
+      <h1 className="sr-only">playlist</h1>
       {/* Playlist-Info */}
       <FlexCol gap={4}>
         <HeaderCard>
@@ -156,6 +157,6 @@ export function PlaylistView() {
 }
 
 const parseBackendUrl = (backendUrl) => {
-    if (!backendUrl) return null;
-    return new URL(backendUrl, BACKEND_BASE_URL).toString();
+  if (!backendUrl) return null;
+  return new URL(backendUrl, BACKEND_BASE_URL).toString();
 };

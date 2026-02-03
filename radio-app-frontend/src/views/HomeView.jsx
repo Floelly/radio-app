@@ -70,11 +70,21 @@ export function HomeView() {
   }, []);
 
   if (!track && !error) {
-    return <LoadingSpinner text={UI_TEXT.home.loadingTrack} />;
+    return (
+      <>
+        <h1 className="sr-only">home</h1>
+        <LoadingSpinner text={UI_TEXT.home.loadingTrack} />
+      </>
+    );
   }
 
   if (error || !track) {
-    return <LoadingFail text={error ?? UI_TEXT.home.noTrack} />;
+    return (
+      <>
+        <h1 className="sr-only">home</h1>
+        <LoadingFail text={error ?? UI_TEXT.home.noTrack} />
+      </>
+    );
   }
 
   const yearText = track.year ? UI_TEXT.home.formatYear(track.year) : "";
@@ -99,6 +109,7 @@ export function HomeView() {
 
   return (
     <ContentWrapper>
+      <h1 className="sr-only">home</h1>
       <FlexCol gap={6}>
         {/* Cover */}
         <HeaderCard

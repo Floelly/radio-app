@@ -56,6 +56,7 @@ export function LoginView() {
 
   return (
     <ContentWrapper>
+      <h1 className="sr-only">login</h1>
       <HeaderCard>
         <p className="text-sm text-base-content/70">
           {UI_TEXT.login.instruction}

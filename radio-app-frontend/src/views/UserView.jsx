@@ -9,6 +9,7 @@ export function UserView() {
 
   return (
     <ContentWrapper className="justify-center h-full">
+      <h1 className="sr-only">user</h1>
       <HeaderCard>
         <p className="text-sm text-base-content/70">
           {UI_TEXT.user.loggedInAs}

@@ -41,6 +41,7 @@ export function WishASongView() {
 
   return (
     <ContentWrapper>
+      <h1 className="sr-only">feedback</h1>
       <div className="w-full max-w-sm rounded-3xl shadow-lg bg-base-300 px-6 py-4 text-center">
         <p className="text-sm text-base-content/70">{UI_TEXT.wish.intro}</p>
       </div>

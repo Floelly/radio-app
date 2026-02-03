@@ -50,6 +50,9 @@ export const ToastFeedbackProvider = ({ children }) => {
               "text-white text-sm rounded-lg px-3 py-2 shadow text-center whitespace-pre-line " +
               (toast.type === "error" ? "bg-red-500/90" : "bg-green-500/90")
             }
+            role={toast.type === "error" ? "alert" : "status"}
+            aria-live={toast.type === "error" ? "assertive" : "polite"}
+            aria-atomic="true"
           >
             {toast.text}
           </div>

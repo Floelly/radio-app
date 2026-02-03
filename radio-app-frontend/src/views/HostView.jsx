@@ -66,15 +66,26 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   }, [loginToken, pollIntervalMs]);
 
   if (isLoading && items.length === 0 && !error && !currentPlaylist) {
-    return <LoadingSpinner text={UI_TEXT.host.loading} />;
+    return (
+      <>
+        <h1 className="sr-only">feedback</h1>
+        <LoadingSpinner text={UI_TEXT.host.loading} />
+      </>
+    );
   }
 
   if (error && items.length === 0 && !currentPlaylist) {
-    return <LoadingFail text={error} />;
+    return (
+      <>
+        <h1 className="sr-only">feedback</h1>
+        <LoadingFail text={error} />
+      </>
+    );
   }
 
   return (
     <ContentWrapper fixedHeader>
+      <h1 className="sr-only">feedback</h1>
       <HeaderCard>
         <FlexRow>
           <RatingCell type="positive" align="left" ratings={playlistRatings} />
