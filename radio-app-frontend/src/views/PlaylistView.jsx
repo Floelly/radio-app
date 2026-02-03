@@ -13,6 +13,7 @@ import {
 } from "@config";
 import { HeaderCard, BasicCard, SongCard } from "@components/BasicCard";
 import { Button, ThumbsButton } from "@components/Button";
+import { PlaylistImage } from "@components/Image";
 import { ContentWrapper, FlexCol, FlexRow } from "@components/Wrapper";
 import { HeaderInfo, Headline2, Headline3, P } from "@components/TextElements";
 
@@ -91,7 +92,10 @@ export function PlaylistView() {
             <Headline2>
               {playlistInfo?.name || UI_TEXT.playlist.loadingName}
             </Headline2>
-            <PlaylistImage coverUrl={playlistInfo?.coverUrl || null} />
+            <PlaylistImage
+              src={parseBackendUrl(playlistInfo?.coverUrl)}
+              alt={UI_TEXT.playlist.currentPlaylistTitle}
+            />
             <P small>
               {playlistInfo?.infotext || UI_TEXT.playlist.loadingInfoText}
             </P>
@@ -106,6 +110,7 @@ export function PlaylistView() {
               title={queue.current.title}
               artist={queue.current.artist}
               coverUrl={parseBackendUrl(queue.current.coverUrl)}
+              coverAlt={UI_TEXT.home.trackCoverAlt(queue.current.title)}
             />
           ) : (
             <BasicCard isLoadingDummy />
@@ -120,6 +125,7 @@ export function PlaylistView() {
               title={track.title}
               artist={track.artist}
               coverUrl={parseBackendUrl(track.coverUrl)}
+              coverAlt={UI_TEXT.home.trackCoverAlt(track.title)}
             />
           ))}
 
@@ -150,20 +156,6 @@ export function PlaylistView() {
 }
 
 const parseBackendUrl = (backendUrl) => {
-  return `url(${new URL(backendUrl, BACKEND_BASE_URL).toString()})`;
+    if (!backendUrl) return null;
+    return new URL(backendUrl, BACKEND_BASE_URL).toString();
 };
-
-function PlaylistImage({ coverUrl }) {
-  return (
-    <div
-      className="rounded-2xl overflow-hidden bg-base-200 h-40 bg-cover bg-center mt-2"
-      style={
-        coverUrl
-          ? {
-              backgroundImage: parseBackendUrl(coverUrl),
-            }
-          : undefined
-      }
-    />
-  );
-}

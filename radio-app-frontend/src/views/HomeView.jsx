@@ -13,6 +13,7 @@ import {
 } from "@config";
 import { HeaderCard, BasicCard } from "@components/BasicCard";
 import { Button } from "@components/Button";
+import { HostAvatarImage, TrackCoverImage } from "@components/Image";
 import { ContentWrapper, FlexCol } from "@components/Wrapper";
 import { Headline2, P } from "@components/TextElements";
 import { LoadingFail, LoadingSpinner } from "@components/LoadingSpinner";
@@ -82,7 +83,7 @@ export function HomeView() {
     : "";
   const coverSrc = track.coverUrl
     ? new URL(track.coverUrl, BACKEND_BASE_URL).toString()
-    : fallbackCoverUrl;
+    : null;
   const hostDisplayName = host?.name || UI_TEXT.home.hostNameFallback;
   const hostImageSrc =
     host?.imageUrl && host.imageUrl.length > 0
@@ -104,21 +105,12 @@ export function HomeView() {
           noPadding
           className="w-full aspect-square overflow-hidden rounded-3xl"
         >
-          {coverSrc ? (
-            <img
-              src={coverSrc}
-              alt={UI_TEXT.home.trackCoverAlt(track.title)}
-              onError={(e) => {
-                if (e.currentTarget.src.endsWith(fallbackCoverUrl)) return;
-                e.currentTarget.src = fallbackCoverUrl;
-              }}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-sm text-base-content/60">
-              {UI_TEXT.home.noCover}
-            </div>
-          )}
+          <TrackCoverImage
+            src={coverSrc}
+            fallbackSrc={fallbackCoverUrl}
+            alt={UI_TEXT.home.trackCoverAlt(track.title)}
+            fallbackText={UI_TEXT.home.noCover}
+          />
         </HeaderCard>
 
         {/* Track-Infos */}
@@ -176,17 +168,10 @@ export function HomeView() {
 export function ModeratorCard({ name, imageUrl }) {
   return (
     <BasicCard flex className="mt-6">
-      <div className="h-12 w-12 rounded-full overflow-hidden bg-base-200 flex-shrink-0">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={UI_TEXT.home.hostPortraitAlt(name)}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="h-full w-full" />
-        )}
-      </div>
+      <HostAvatarImage
+        src={imageUrl}
+        alt={UI_TEXT.home.hostPortraitAlt(name)}
+      />
       <FlexCol gap={0} className="flex-1">
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold truncate">{name}</span>

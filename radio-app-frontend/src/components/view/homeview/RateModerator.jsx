@@ -4,6 +4,7 @@ import { useAppContext } from "@context/AppContext";
 import { useFeedbackContext } from "@context/ToastFeedbackContext";
 import { TEXTAREA_ROWS_DEFAULT, UI_TEXT } from "@config";
 import { Button, ThumbsButton } from "@components/Button";
+import { HostPortraitImage } from "@components/Image";
 
 export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   const [hostRating, setHostRating] = useState(null);
@@ -45,13 +46,10 @@ export function RateModerator({ setIsHostCardOpen, hostImageSrc, hostName }) {
   return (
     <>
       <div className="w-full max-w-sm flex flex-col items-center gap-6">
-        <div className="mx-auto h-32 w-32 rounded-full overflow-hidden bg-base-200">
-          {hostImageSrc ? (
-            <img src={hostImageSrc} className="h-full w-full object-cover" />
-          ) : (
-            <div className="h-full w-full" />
-          )}
-        </div>
+        <HostPortraitImage
+          src={hostImageSrc}
+          alt={UI_TEXT.home.hostPortraitAlt(hostName)}
+        />
         <p className="text-sm text-base-content/70 text-center">
           {UI_TEXT.rateModerator.prompt(hostName)}
           <br />

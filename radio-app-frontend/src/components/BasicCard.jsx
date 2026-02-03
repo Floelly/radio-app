@@ -1,3 +1,5 @@
+import { SongCoverImage } from "@components/Image";
+
 export function BasicCard({
   flex = false,
   isLoadingDummy = false,
@@ -54,19 +56,11 @@ export function SongCard({
   title = "no title found",
   artist = "no artist found",
   coverUrl = null,
+  coverAlt = "",
 }) {
   return (
     <BasicCard flex>
-      <div
-        className="h-10 w-10 rounded-xl bg-base-200 flex-shrink-0 bg-cover bg-center"
-        style={
-          coverUrl
-            ? {
-                backgroundImage: coverUrl,
-              }
-            : undefined
-        }
-      />
+      <SongCoverImage src={coverUrl} alt={coverAlt} />
       <div className="min-w-0">
         <p className="text-sm font-semibold text-base-content truncate">
           {title}
