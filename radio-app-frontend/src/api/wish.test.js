@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { postSongWish } from "./wish";
 import * as http from "./http";
 
 vi.mock("@/config/api-config", () => ({
@@ -11,16 +10,16 @@ vi.mock("./auth", () => ({
   attachToken: vi.fn((token) => `WUFF ${token}`),
 }));
 
+const postJsonSpy = vi.spyOn(http, "postJson");
+
 describe("postSongWish", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    postJsonSpy.mockResolvedValue({ success: true });
   });
 
   it("calls postJson mit token", async () => {
-    const postJsonSpy = vi
-      .spyOn(http, "postJson")
-      .mockResolvedValue({ success: true });
-
+    const { postSongWish } = await import("./wish");
     const data = { song: "test" };
     const token = "abc123";
 
@@ -35,13 +34,10 @@ describe("postSongWish", () => {
   });
 
   it("calls postJson without token", async () => {
-    const postJsonSpy = vi
-      .spyOn(http, "postJson")
-      .mockResolvedValue({ success: true });
-
+    const { postSongWish } = await import("./wish");
     await postSongWish({ data: { song: "test" } });
 
-    const [, , token] = postJsonSpy.mock.lastCall;
-    expect(token).toBeNull();
+    const [, , tokenArg] = postJsonSpy.mock.lastCall;
+    expect(tokenArg).toBeNull();
   });
 });
