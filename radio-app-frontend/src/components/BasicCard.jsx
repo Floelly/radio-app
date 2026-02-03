@@ -28,6 +28,28 @@ export function BasicCard({
   );
 }
 
+export function HeaderTagTextCard({
+  header = null,
+  tag = null,
+  tagStyle = "",
+  text = null,
+  className = "",
+  children,
+}) {
+  return (
+    <BasicCard className={className}>
+      <div className="flex items-center justify-between">
+        {header && <p className="text-sm font-semibold truncate">{header}</p>}
+        {tag && (
+          <span className={`text-xs font-semibold ${tagStyle}`}>{tag}</span>
+        )}
+      </div>
+      {text && <p className="mt-2 text-sm text-base-content/80">{text}</p>}
+      {children}
+    </BasicCard>
+  );
+}
+
 export function HeaderCard({ noPadding = false, className = "", children }) {
   return (
     <div

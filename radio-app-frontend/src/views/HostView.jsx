@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { getLiveFeedback } from "@api/feedback";
 import { useAppContext } from "@context/AppContext";
 import { HOST_FEEDBACK_POLL_INTERVAL_MS, UI_TEXT } from "@config";
-import { BasicCard, HeaderCard } from "@components/BasicCard";
-import { ContentWrapper } from "@components/Wrapper";
+import { HeaderCard, HeaderTagTextCard } from "@components/BasicCard";
+import { ContentWrapper, FlexCol, FlexRow } from "@components/Wrapper";
+import { Headline2, Headline3, HeaderInfo } from "@components/TextElements";
+import { LoadingFail, LoadingSpinner } from "@components/LoadingSpinner";
 
 export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   const [items, setItems] = useState([]);
@@ -34,49 +36,16 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
     const loadLive = async () => {
       try {
         setError(null);
+
         const data = await getLiveFeedback({
           since: lastTimestampRef.current,
           token: loginToken,
         });
+
         if (isCancelled || !data || typeof data !== "object") return;
-        if (data.playlist && typeof data.playlist === "object") {
-          setCurrentPlaylist(data.playlist);
-        }
-        if (
-          typeof data.ratings?.positive === "number" &&
-          typeof data.ratings?.negative === "number"
-        ) {
-          setPlaylistRatings({
-            positive: data.ratings.positive,
-            negative: data.ratings.negative,
-          });
-        }
-        let nextMaxTimestamp = lastTimestampRef.current;
-        if (typeof data.updatedAt === "number") {
-          nextMaxTimestamp = Math.max(nextMaxTimestamp, data.updatedAt);
-        }
-        if (Array.isArray(data.reviews) && data.reviews.length > 0) {
-          const newItems = [];
-          for (const item of data.reviews) {
-            if (typeof item?.timestamp === "number") {
-              nextMaxTimestamp = Math.max(nextMaxTimestamp, item.timestamp);
-            }
-            const key = `review-${item?.id ?? "unknown"}`;
-            if (!seenKeysRef.current.has(key)) {
-              seenKeysRef.current.add(key);
-              newItems.push(item);
-            }
-          }
-          lastTimestampRef.current = nextMaxTimestamp;
-          if (newItems.length > 0) {
-            setItems((prev) => {
-              const merged = [...prev, ...newItems];
-              merged.sort((a, b) => b.timestamp - a.timestamp);
-              return merged;
-            });
-          }
-        }
-        lastTimestampRef.current = nextMaxTimestamp;
+
+        extractPlaylistAndRatings(data, setCurrentPlaylist, setPlaylistRatings);
+        mergeNewReviews(data, lastTimestampRef, seenKeysRef, setItems);
       } catch (err) {
         if (!isCancelled) {
           setError(UI_TEXT.host.loadError);
@@ -97,86 +66,142 @@ export function HostView({ pollIntervalMs = HOST_FEEDBACK_POLL_INTERVAL_MS }) {
   }, [loginToken, pollIntervalMs]);
 
   if (isLoading && items.length === 0 && !error && !currentPlaylist) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <span className="loading loading-spinner loading-md text-primary" />
-        <p className="ml-4 text-sm text-base-content/70">
-          {UI_TEXT.host.loading}
-        </p>
-      </div>
-    );
+    return <LoadingSpinner text={UI_TEXT.host.loading} />;
   }
 
   if (error && items.length === 0 && !currentPlaylist) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <p className="text-sm text-error">{error}</p>
-      </div>
-    );
+    return <LoadingFail text={error} />;
   }
 
   return (
     <ContentWrapper fixedHeader>
       <HeaderCard>
-        <p className="text-center text-xs uppercase tracking-wide text-base-content/60">
-          {UI_TEXT.host.currentPlaylistLabel}
-        </p>
-        <div className="flex mt-2 text-lg">
-          <div className="flex-1 text-left">
-            {playlistRatings ? (
-              <span className="text-success">
-                {UI_TEXT.common.thumbsUp} {playlistRatings.positive}
-              </span>
-            ) : (
-              <span className="text-success">
-                {UI_TEXT.host.ratingPlaceholderPositive}
-              </span>
-            )}
-          </div>
-          <p className="text-center font-semibold">
-            {currentPlaylist?.name || UI_TEXT.common.unknown}
-          </p>
-          <div className="flex-1 text-right">
-            {playlistRatings ? (
-              <span className="text-error">
-                {UI_TEXT.common.thumbsDown} {playlistRatings.negative}
-              </span>
-            ) : (
-              <span className="text-error">
-                {UI_TEXT.host.ratingPlaceholderNegative}
-              </span>
-            )}
-          </div>
-        </div>
+        <FlexRow>
+          <RatingCell type="positive" align="left" ratings={playlistRatings} />
+          <HeaderInfo className="text-center">
+            {UI_TEXT.host.currentPlaylistLabel}
+          </HeaderInfo>
+          <RatingCell type="negative" align="right" ratings={playlistRatings} />
+        </FlexRow>
+        <Headline2 className="text-center">
+          {currentPlaylist?.name || UI_TEXT.common.unknown}
+        </Headline2>
       </HeaderCard>
-        {(items.length === 0) ? (
-          <p className="text-sm text-base-content/70 text-center">
+      <FlexCol>
+        <Headline3>{UI_TEXT.host.userFeedbackHeadline}</Headline3>
+        {items.length === 0 ? (
+          <p className="text-sm text-base-content/70">
+            {/* TODO: in text element */}
             {UI_TEXT.host.noReviews}
           </p>
         ) : (
-          <div className="flex flex-col gap-2">
-            {items.map((item) => {
-              const ratingClass =
-                item.rating === "positive" ? "text-success" : "text-error";
-              const ratingLabel =
-                item.rating === "positive"
-                  ? UI_TEXT.host.ratingPositive
-                  : UI_TEXT.host.ratingNegative;
-              const reviewId = `review-${item.id}`;
-              return (
-                <BasicCard id={reviewId} key={reviewId}>
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold truncate">{item.email}</p>
-                    <span className={`text-xs font-semibold ${ratingClass}`}>
-                      {ratingLabel}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-base-content/80">{item.text}</p>
-                </BasicCard>
-              );
-            })}
-          </div>
-      )}
+          <UserFeedbackList items={items} />
+        )}
+      </FlexCol>
     </ContentWrapper>
   );
+}
+
+function RatingCell({ align = "left", type, ratings }) {
+  const isPositive = type === "positive";
+  const colorClass = isPositive ? "text-success" : "text-error";
+  const icon = isPositive ? UI_TEXT.common.thumbsUp : UI_TEXT.common.thumbsDown;
+  const placeholder = isPositive
+    ? UI_TEXT.host.ratingPlaceholderPositive
+    : UI_TEXT.host.ratingPlaceholderNegative;
+  const value = isPositive ? ratings?.positive : ratings?.negative;
+  const alignClass =
+    align === "left"
+      ? "text-left"
+      : align === "right"
+        ? "text-right"
+        : "text-center";
+
+  return (
+    <div className={`flex-1 ${alignClass} text-lg`}>
+      <span className={colorClass}>
+        {ratings ? (
+          <>
+            {icon} {value}
+          </>
+        ) : (
+          placeholder
+        )}
+      </span>
+    </div>
+  );
+}
+
+function UserFeedbackList({ items }) {
+  return (
+    <>
+      {items.map((item) => {
+        const isPositive = item.rating === "positive";
+        const ratingClass = isPositive ? "text-success" : "text-error";
+        const ratingLabel = isPositive
+          ? UI_TEXT.host.ratingPositive
+          : UI_TEXT.host.ratingNegative;
+        const reviewId = `review-${item.id}`;
+
+        return (
+          <HeaderTagTextCard
+            key={reviewId}
+            id={reviewId}
+            header={item.email}
+            tag={ratingLabel}
+            tagStyle={ratingClass}
+            text={item.text}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function extractPlaylistAndRatings(
+  data,
+  setCurrentPlaylist,
+  setPlaylistRatings,
+) {
+  if (data?.playlist && typeof data.playlist === "object") {
+    setCurrentPlaylist(data.playlist);
+  }
+
+  const pos = data?.ratings?.positive;
+  const neg = data?.ratings?.negative;
+  if (typeof pos === "number" && typeof neg === "number") {
+    setPlaylistRatings({ positive: pos, negative: neg });
+  }
+}
+
+function mergeNewReviews(data, lastTimestampRef, seenKeysRef, setItems) {
+  let nextMaxTimestamp = lastTimestampRef.current;
+
+  if (typeof data?.updatedAt === "number") {
+    nextMaxTimestamp = Math.max(nextMaxTimestamp, data.updatedAt);
+  }
+
+  const reviews = Array.isArray(data?.reviews) ? data.reviews : [];
+  const newItems = [];
+
+  for (const item of reviews) {
+    if (typeof item?.timestamp === "number") {
+      nextMaxTimestamp = Math.max(nextMaxTimestamp, item.timestamp);
+    }
+    const key = `review-${item?.id ?? "unknown"}`;
+    if (!seenKeysRef.current.has(key)) {
+      seenKeysRef.current.add(key);
+      newItems.push(item);
+    }
+  }
+
+  if (newItems.length > 0) {
+    setItems((prev) => {
+      const merged = [...prev, ...newItems];
+      merged.sort((a, b) => b.timestamp - a.timestamp);
+      return merged;
+    });
+  }
+
+  lastTimestampRef.current = nextMaxTimestamp;
 }

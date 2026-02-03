@@ -75,6 +75,7 @@ export const UI_TEXT = {
     ratingNegative: "Negativ",
     ratingPlaceholderPositive: `${UI_COMMON.thumbsUp} -`,
     ratingPlaceholderNegative: `${UI_COMMON.thumbsDown} -`,
+    userFeedbackHeadline: "Neustes Hörer Feedback",
   },
   playlist: {
     loadError: "Fehler beim Laden der Playlist.",
