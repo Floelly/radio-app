@@ -19,5 +19,15 @@ export function Headline3({ className = "", children }) {
 }
 
 export function Headline2({ className = "", children }) {
-  return <h2 className={`text-lg font-semibold ${className}`}>{children}</h2>;
+  return <h2 className={`text-xl font-semibold ${className}`}>{children}</h2>;
+}
+
+export function P({ small = false, className = "", children }) {
+  return (
+    <p
+      className={`${small ? "text-xs line-clamp-4" : "text-sm"} text-base-content/70 ${className}`}
+    >
+      {children}
+    </p>
+  );
 }

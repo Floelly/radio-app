@@ -13,7 +13,9 @@ import {
 } from "@config";
 import { HeaderCard, BasicCard } from "@components/BasicCard";
 import { Button } from "@components/Button";
-import { ContentWrapper } from "@components/Wrapper";
+import { ContentWrapper, FlexCol } from "@components/Wrapper";
+import { Headline2, P } from "@components/TextElements";
+import { LoadingFail, LoadingSpinner } from "@components/LoadingSpinner";
 
 const fallbackCoverUrl = "src/assets/fallback-cover.png";
 
@@ -67,22 +69,11 @@ export function HomeView() {
   }, []);
 
   if (!track && !error) {
-    return (
-      <div className="flex flex-col items-center justify-center pt-6 pb-8">
-        <span className="loading loading-spinner loading-md text-primary" />
-        <p className="mt-4 text-sm text-base-content/70">
-          {UI_TEXT.home.loadingTrack}
-        </p>
-      </div>
-    );
+    return <LoadingSpinner text={UI_TEXT.home.loadingTrack} />;
   }
 
   if (error || !track) {
-    return (
-      <div className="flex flex-col items-center justify-center pt-6 pb-8">
-        <p className="text-sm text-error">{error ?? UI_TEXT.home.noTrack}</p>
-      </div>
-    );
+    return <LoadingFail text={error ?? UI_TEXT.home.noTrack} />;
   }
 
   const yearText = track.year ? UI_TEXT.home.formatYear(track.year) : "";
@@ -107,8 +98,7 @@ export function HomeView() {
 
   return (
     <ContentWrapper>
-      {/* Oberer Block */}
-      <div className="w-full max-w-sm flex-1 flex flex-col items-center gap-6">
+      <FlexCol gap={6}>
         {/* Cover */}
         <HeaderCard
           noPadding
@@ -130,72 +120,44 @@ export function HomeView() {
             </div>
           )}
         </HeaderCard>
+
         {/* Track-Infos */}
-        <div className="w-full max-w-sm text-center space-y-1 mb-6">
-          <h2 className="text-xl font-semibold truncate">{track.title}</h2>
-          <p className="text-sm text-base-content/80 truncate">
+        <div className="w-full max-w-sm text-center space-y-1">
+          <Headline2 className="truncate">{track.title}</Headline2>
+          <P className="truncate">
             {track.artist}
             {UI_TEXT.home.artistAlbumSeparator}
             {track.album}
             {yearText}
-          </p>
-          <p className="text-xs text-base-content/60 truncate">
+          </P>
+          <P small className="truncate">
             {commentText || UI_TEXT.home.liveRadio}
-          </p>
+          </P>
         </div>
-      </div>
 
-      {/* Unterer Block */}
-      {host && (
-        <div className="w-full max-w-sm mt-4">
-          {/* Moderator-Card */}
-          <BasicCard flex>
-            <div className="h-12 w-12 rounded-full overflow-hidden bg-base-200 flex-shrink-0">
-              {hostImageSrc ? (
-                <img
-                  src={hostImageSrc}
-                  alt={UI_TEXT.home.hostPortraitAlt(hostDisplayName)}
-                  className="h-full w-full object-cover"
+        {host && (
+          <>
+            {/* Moderator-Card & Feedback */}
+            <ModeratorCard name={hostDisplayName} imageUrl={hostImageSrc} />
+            <FlexCol className="items-center">
+              <P>{UI_TEXT.home.hostMessagePrompt(hostDisplayName)}</P>
+              {isLoggedIn ? (
+                <Button
+                  small
+                  text={UI_TEXT.home.hostMessageButton(hostDisplayName)}
+                  onClick={handleHostFeedbackClick}
                 />
               ) : (
-                <div className="h-full w-full" />
+                <Button
+                  small
+                  text={UI_TEXT.home.loginForHostMessageButton}
+                  onClick={() => goToLogin("home")}
+                />
               )}
-            </div>
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold truncate">
-                  {host.name}
-                </span>
-                <span className="badge badge-success badge-sm uppercase tracking-wide ml-2">
-                  {UI_TEXT.home.liveBadge}
-                </span>
-              </div>
-              <span className="text-xs text-base-content/60 truncate">
-                {UI_TEXT.home.hostSubtitle}
-              </span>
-            </div>
-          </BasicCard>
-          {/* Feedback-Bereich */}
-          <div className="mt-7 flex flex-col items-center">
-            <p className="text-sm text-base-content/70 mb-3 text-center">
-              {UI_TEXT.home.hostMessagePrompt(hostDisplayName)}
-            </p>
-            {isLoggedIn ? (
-              <Button
-                small
-                text={UI_TEXT.home.hostMessageButton(hostDisplayName)}
-                onClick={handleHostFeedbackClick}
-              />
-            ) : (
-              <Button
-                small
-                text={UI_TEXT.home.loginForHostMessageButton}
-                onClick={() => goToLogin("home")}
-              />
-            )}
-          </div>
-        </div>
-      )}
+            </FlexCol>
+          </>
+        )}
+      </FlexCol>
 
       {/* Modal */}
       {isHostCardOpen && (
@@ -208,5 +170,34 @@ export function HomeView() {
         </Modal>
       )}
     </ContentWrapper>
+  );
+}
+
+export function ModeratorCard({ name, imageUrl }) {
+  return (
+    <BasicCard flex className="mt-6">
+      <div className="h-12 w-12 rounded-full overflow-hidden bg-base-200 flex-shrink-0">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={UI_TEXT.home.hostPortraitAlt(name)}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="h-full w-full" />
+        )}
+      </div>
+      <FlexCol gap={0} className="flex-1">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-sm font-semibold truncate">{name}</span>
+          <span className="badge badge-success badge-sm uppercase tracking-wide ml-2">
+            {UI_TEXT.home.liveBadge}
+          </span>
+        </div>
+        <P small className="truncate">
+          {UI_TEXT.home.hostSubtitle}
+        </P>
+      </FlexCol>
+    </BasicCard>
   );
 }

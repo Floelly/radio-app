@@ -50,6 +50,33 @@ export function HeaderTagTextCard({
   );
 }
 
+export function SongCard({
+  title = "no title found",
+  artist = "no artist found",
+  coverUrl = null,
+}) {
+  return (
+    <BasicCard flex>
+      <div
+        className="h-10 w-10 rounded-xl bg-base-200 flex-shrink-0 bg-cover bg-center"
+        style={
+          coverUrl
+            ? {
+                backgroundImage: coverUrl,
+              }
+            : undefined
+        }
+      />
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-base-content truncate">
+          {title}
+        </p>
+        <p className="text-xs text-base-content/60 truncate">{artist}</p>
+      </div>
+    </BasicCard>
+  );
+}
+
 export function HeaderCard({ noPadding = false, className = "", children }) {
   return (
     <div
