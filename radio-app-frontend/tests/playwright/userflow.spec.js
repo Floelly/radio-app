@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { UI_TEXT } from "../../src/config/config.js";
-import { API_ENDPOINT } from "../../src/config/api-config.js";
+import { UI_TEXT } from "@/config/config.js";
+import { API_ENDPOINT } from "@/config/api-config.js";
 
 test("user can login and rate playlist", async ({ page }) => {
   await page.goto("/");
@@ -17,9 +17,7 @@ test("user can login and rate playlist", async ({ page }) => {
     );
   });
 
-  await page
-    .getByRole("button", { name: UI_TEXT.login.loginButton })
-    .click();
+  await page.getByRole("button", { name: UI_TEXT.login.loginButton }).click();
   await loginResponsePromise;
 
   await expect(
@@ -38,9 +36,7 @@ test("user can login and rate playlist", async ({ page }) => {
     );
   });
 
-  await page
-    .getByRole("button", { name: UI_TEXT.common.thumbsUp })
-    .click();
+  await page.getByRole("button", { name: UI_TEXT.common.thumbsUp }).click();
 
   const feedbackResponse = await feedbackResponsePromise;
   expect(feedbackResponse.ok()).toBe(true);

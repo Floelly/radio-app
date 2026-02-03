@@ -1,24 +1,5 @@
 import { BACKEND_BASE_URL, UI_TEXT } from "@config";
 
-const buildError = (data) => {
-  let detail = "";
-  if (typeof data?.detail === "string") {
-    detail = data.detail;
-  } else if (Array.isArray(data?.detail)) {
-    detail = data.detail
-      .map((item) =>
-        typeof item?.msg === "string" ? item.msg : JSON.stringify(item),
-      )
-      .join("\n\n");
-  } else {
-    detail = JSON.stringify(data || UI_TEXT.common.genericError);
-  }
-
-  const error = new Error(detail);
-  error.detail = detail;
-  return error;
-};
-
 export const postJson = async (path, payload, authorization = null) => {
   const headers = { "Content-Type": "application/json" };
   if (authorization) {
@@ -54,6 +35,21 @@ export const getJson = async (path, payload = null, authorization = null) => {
   return data;
 };
 
-export const get = async (path, payload, authorization) => {
-  return getJson(path, payload, authorization);
+const buildError = (data) => {
+  let detail = "";
+  if (typeof data?.detail === "string") {
+    detail = data.detail;
+  } else if (Array.isArray(data?.detail)) {
+    detail = data.detail
+      .map((item) =>
+        typeof item?.msg === "string" ? item.msg : JSON.stringify(item),
+      )
+      .join("\n\n");
+  } else {
+    detail = JSON.stringify(data || UI_TEXT.common.genericError);
+  }
+
+  const error = new Error(detail);
+  error.detail = detail;
+  return error;
 };
