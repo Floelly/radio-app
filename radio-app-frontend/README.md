@@ -66,12 +66,14 @@ App build accessible at dist/-folder.
 # build app for web
 npm run build
 
+# add capacitor android target
+npx cap add android
+
 # sync from mobile to native
 npx cap sync
 
-# open Android Studio / Xcode (if available and set up)
+# open Android Studio
 npx cap open android
-npx cap open ios
 ```
 Native app builds accessible in android/ and ios/ folder. (Built by Capacitor)
 
