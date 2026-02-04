@@ -4,7 +4,7 @@ Die Folgende Datei umfasst eine grobe Gliederung des Projektberichts, der diesem
 - no english version -
 ```
 
-## 1. Einleitung (1.5 - 2)
+## 1. Einleitung (1.5 - 2) (J)
 1.1 Ausgangssituation (kurz)
 - Beschreibung der Problemstellung (Interaktionsmöglichkeiten zwischen Moderator:innen und Hörer:innen)
 - Zielsetzung des Projekts
@@ -17,7 +17,7 @@ Die Folgende Datei umfasst eine grobe Gliederung des Projektberichts, der diesem
 
 1.3 Kurzer Überblick über die Gliederung des Berichts
 
-## 2. Projektplanung (2 - 2.5)
+## 2. Projektplanung (2 - 2.5) (J)
 2.1 Projektorganisation
 - Rollenverteilung im Team / Überblick über Entwicklungsansatz (Sprints, Scrum Light-Light?! (Dailys, Aufgabenteilung, Gegencheck))
 - Kommunikation (Teams (daylies + rückfragen per chat)) 
@@ -37,13 +37,13 @@ Die Folgende Datei umfasst eine grobe Gliederung des Projektberichts, der diesem
 - Vorüberlegung Tech-Stack (nur grob: React + Capacitor, Design-Adds?, Codequality-Adds? etc.)
 - Entwicklungs Software (IDE, Emulatoren (eventuell))
 
-## 3. Projektdurchführung (7–8)
-3.1 Technisches Konzept (final)
+## 3. Projektdurchführung (7–8) (beide)
+3.1 Technisches Konzept (final) (J)
 - Architekturübersicht (Frontend/Backend-Kommunikation, API-Stubs, Diagram?)
 - Entscheidungen zu Framework/Sprachen/Tools
 - Sicherheits- und Authentifizierungskonzept (Login/Register-Funktion, Tokenhandling)
 
-3.2 Frontend-Implementierung (final)
+3.2 Frontend-Implementierung (final) (F)
 - Projektstruktur (allgemein + frontend im Detail)
 - UI/UX-Konzept (Layout-Aufbau, Navigation, mobile Responsive Design, Toast Messages)
 - Beschreibung Views (Home (+Moderatorbewertung), Playlist, Liedwunsch/Feedback, Login/User)
@@ -51,22 +51,18 @@ Die Folgende Datei umfasst eine grobe Gliederung des Projektberichts, der diesem
 - Barrierefreiheit in Form von xy
 - Codebeispiele?
 
-3.3 Backend-Stub-Implementierung
+3.3 Backend-Stub-Implementierung (J)
 - Beschreibung Endpunkte
 - Datenmodell und Beispielantworten
 - kein Testing ?
 
-3.4 Strategie im Detail
-- Datenaustausch (ein detailliertes Beispiel von WishASong?)
-- Rollen und Authentifizierung
+3.4 Tests und Qualitätssicherung? (F)
 - Fehler- und Ausnahmebehandlung, Userfeedback
-
-3.5 Tests und Qualitätssicherung?
 - Tests (unit tests im frontend (logik + teils komponenten), playwright test für userflow, 20 klicks manuell im browser für moderator:in + hörer:in (überschaubar))
 - Codequality mit Prettier (Whitespaces, Linelength, Naming) + IDE-Hinweise (kein fest implementiertes Tool für Code Smells)
 - Screenshots (Testlauf, Playwright Testlauf)?
 
-## 4. Ergebnisse und Reflexion (2)
+## 4. Ergebnisse und Reflexion (2) (F)
 4.1 Projektergebnisse
 - Implementierung vs. User Stories (alles erfüllt)
 - Technischer Erfolg (Funktion auf Android/iOS?)
@@ -96,7 +92,7 @@ Die Folgende Datei umfasst eine grobe Gliederung des Projektberichts, der diesem
 - Teamarbeit und Aufgabenteilung
 - Lernfortschritte im Bereich Mobile Software Engineering
 
-## 5. Fazit und Ausblick (0,5–1)
+## 5. Fazit und Ausblick (0,5–1) (F)
 - wichtigsten Erkenntnisse
 - Potenziale (zukünftige Weiterentwicklung, bestehende Systeme)
 
