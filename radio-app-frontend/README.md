@@ -1,7 +1,7 @@
 # Radio App Frontend
 
-Dieses Repository enthält das Frontend und Herzstück der Radio-App für das Modul „Mobile Software Engineering“.  
-Es handelt sich um eine **Vite + React** Anwendung, die mit Capacitor für Android und iOS gebündelt werden kann.
+This repository contains the frontend and core of the radio app developed during the "Mobile Software Engineering" module at International University Erfurt.
+It is a **Vite + React** application that can be bundled with **Capacitor** for Android and iOS.
 
 ## Tech-Stack
 
@@ -11,8 +11,10 @@ Es handelt sich um eine **Vite + React** Anwendung, die mit Capacitor für Andro
 - Tailwind CSS / daisyUI (UI-Styling)
 - Prettier (Coding Guidelines)
 - Capacitor (Bridge zu Android/iOS)
+- vitest + react-testing-library für unit tests
+- playwright für user-flow-test
 
-## Voraussetzungen
+## Requirements
 
 - Node.js (LTS)
 - npm
@@ -20,57 +22,73 @@ Es handelt sich um eine **Vite + React** Anwendung, die mit Capacitor für Andro
 ## Installation
 
 ```bash
-# Dependencies installieren
+# install dependencies
 npm install
 ```
 
-## Entwicklung starten
+## Start Development
 
 ```bash
-# Dev-Server mit Hot-Reload
+# Dev-Server with hot reload
 npm run dev
 ```
-
-Der Dev-Server ist unter http://localhost:5173 erreichbar.
+Dev-server available at http://localhost:5173 (default).
 
 ```bash
 # Prettier Check
-npx prettier . --check
+npm run format:check
 
-# Prettier Anwenden
-npx prettier . --write
+# Prettier Apply
+npm run format
 ```
 
-## Build für Web
-
+## Testing
 ```bash
-# Produktionsbuild erzeugen
-npm run build
+# run all unit tests
+npm run test
+
+# run playwright flow-tests
+npm run test:playwright
+
 ```
 
-Das gebaute Frontend liegt anschließend im dist/-Ordner.
-
-## Build für Mobile
+## Build for web
 
 ```bash
-# Web-Assets bauen
+# build app
+npm run build
+```
+App build accessible at dist/-folder.
+
+## Build for mobile
+
+```bash
+# build app for web
 npm run build
 
-# Änderungen in die nativen Projekte synchronisieren
+# sync from mobile to native
 npx cap sync
 
-# Android Studio / Xcode öffnen (falls eingerichtet)
+# open Android Studio / Xcode (if available and set up)
 npx cap open android
 npx cap open ios
 ```
+Native app builds accessible in android/ and ios/ folder. (Built by Capacitor)
 
-Die generierten Ordner android/ und ios/ werden über Capacitor erzeugt.
-
-## Ordnerstruktur
+## Folderstructure
 
 ```text
 src/
-  components/      // UI-Komponenten
+  api/             // api calls
+  assets/          // pictures
+  components/      // ui components
+    views/         // single view components
+  config/          // configuration files
+  context/         // react context providers
   views/           // Seiten/Views
   api/             // API-Calls
+  App.jsx          // Layout
+  main.jsx         // reacts top level file
+tests/             // Playwright tests
++ various config files
 ```
