@@ -9,6 +9,7 @@ export const PLAYLIST_REFRESH_INTERVAL_MS = 30_000;
 export const HOST_REFRESH_INTERVAL_MS = 30_000;
 const ENV =
   (typeof import.meta !== "undefined" && import.meta.env) ||
+  // eslint-disable-next-line no-undef
   (typeof process !== "undefined" && process.env) ||
   {};
 export const BACKEND_BASE_URL =
