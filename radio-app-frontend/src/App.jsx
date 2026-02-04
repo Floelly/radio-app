@@ -50,7 +50,7 @@ function App() {
   };
 
   return (
-    <div className="h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
+    <div className="app-shell h-dvh flex flex-col bg-base-100 text-base-content overflow-hidden">
       <div
         className="sr-only"
         role="status"
